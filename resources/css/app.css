@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+    --color-brand-dark: #1F5A22;
+    --color-brand: #2F7D32;
+    --color-brand-chart: #4F9A3A;
+    --color-surface: #F5F7F2;
+    --color-line: #E3E8DF;
+    --color-role-bg: #E4EFE1;
+}
