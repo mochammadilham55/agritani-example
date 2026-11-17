@@ -22,7 +22,7 @@
                     @foreach ($steps as $key => $label)
                         @php $done = $loop->index <= $currentIdx; @endphp
                         <li class="col">
-                            <div @class(['rounded-circle d-flex align-items-center justify-content-center fw-bold mx-auto mb-1', 'bg-brand text-white' => $done, 'bg-secondary-subtle text-secondary' => ! $done]) style="width: 2rem; height: 2rem;">{{ $done ? '✓' : $loop->iteration }}</div>
+                            <div @class(['rounded-circle d-flex align-items-center justify-content-center fw-bold mx-auto mb-1', 'bg-brand text-white' => $done, 'bg-secondary-subtle text-secondary' => ! $done]) style="width: 2rem; height: 2rem;">{{ $loop->iteration }}</div>
                             <span @class(['fw-semibold text-brand-dark' => $loop->index === $currentIdx, 'text-secondary' => ! $done])>{{ $label }}</span>
                         </li>
                     @endforeach
@@ -115,7 +115,7 @@
             @if ($order->status === 'dikirim')
                 <form method="POST" action="{{ route('pembeli.orders.complete', $order) }}">
                     @csrf @method('PATCH')
-                    <button class="btn btn-primary w-100 fw-semibold">✓ Pesanan Diterima</button>
+                    <button class="btn btn-primary w-100 fw-semibold">Pesanan Diterima</button>
                 </form>
             @endif
 

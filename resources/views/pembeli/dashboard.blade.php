@@ -6,7 +6,7 @@
 @section('content')
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <p class="text-secondary mb-0">Halo, <strong>{{ auth()->user()->name }}</strong>! Berikut ringkasan pesanan Anda.</p>
-        <a href="{{ route('home') }}" class="btn btn-primary btn-sm fw-semibold">🛒 Belanja Sekarang</a>
+        <a href="{{ route('home') }}" class="btn btn-primary btn-sm fw-semibold">Belanja Sekarang</a>
     </div>
 
     <div class="row g-3">

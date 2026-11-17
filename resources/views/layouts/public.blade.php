@@ -11,14 +11,14 @@
     @endphp
     <header class="sticky-top bg-brand-dark text-white" style="z-index: 1020;">
         <div class="container d-flex align-items-center gap-3 py-2">
-            <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">🌱 AgriTani</a>
+            <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">AgriTani</a>
             <form action="{{ route('home') }}" method="GET" class="d-none d-sm-block flex-grow-1" style="max-width: 28rem;">
                 <input type="search" name="q" value="{{ request('q') }}" placeholder="Cari hasil tani…" class="form-control form-control-sm" aria-label="Cari produk">
             </form>
             <nav class="ms-auto d-flex align-items-center gap-2 small fw-medium">
                 @if ($user?->isPembeli())
                     <a href="{{ route('pembeli.cart.index') }}" class="btn btn-sm text-white">
-                        🛒 Keranjang
+                        Keranjang
                         @if ($cartCount)<span class="badge rounded-pill bg-white text-brand-dark ms-1">{{ $cartCount }}</span>@endif
                     </a>
                 @endif

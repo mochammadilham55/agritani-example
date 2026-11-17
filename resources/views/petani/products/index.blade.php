@@ -29,7 +29,7 @@
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="rounded bg-role-bg d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0" style="width: 2.5rem; height: 2.5rem;">
-                                        @if ($p->image)<img src="{{ asset('storage/'.$p->image) }}" alt="" class="w-100 h-100 object-fit-cover">@else 🌿 @endif
+                                        @if ($p->image)<img src="{{ asset('storage/'.$p->image) }}" alt="" class="w-100 h-100 object-fit-cover">@endif
                                     </div>
                                     <div><p class="fw-medium mb-0">{{ $p->name }}</p><p class="small text-secondary mb-0">{{ $p->category?->name }}</p></div>
                                 </div>

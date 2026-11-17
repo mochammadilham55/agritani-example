@@ -21,7 +21,7 @@
                             @php $p = $item->product; @endphp
                             <li class="list-group-item p-3">
                                 <div class="d-flex flex-wrap align-items-center gap-3">
-                                    <div class="rounded bg-role-bg d-flex align-items-center justify-content-center fs-3 flex-shrink-0" style="width: 4rem; height: 4rem;">🌿</div>
+                                    <div class="rounded bg-role-bg d-flex align-items-center justify-content-center fs-3 flex-shrink-0" style="width: 4rem; height: 4rem;"></div>
                                     <div class="flex-grow-1" style="min-width: 10rem;">
                                         <a href="{{ route('products.show', $p) }}" class="fw-semibold text-decoration-none">{{ $p->name }}</a>
                                         <p class="small text-secondary mb-0">{{ $p->farmer?->name }} · Rp {{ number_format($p->price, 0, ',', '.') }} / {{ $p->unit }}</p>
@@ -40,7 +40,7 @@
                                     <p class="fw-bold text-end mb-0" style="width: 7rem;">Rp {{ number_format($p->price * $item->quantity, 0, ',', '.') }}</p>
                                     <form method="POST" action="{{ route('pembeli.cart.destroy', $item) }}">
                                         @csrf @method('DELETE')
-                                        <button class="btn btn-link text-danger p-0" aria-label="Hapus {{ $p->name }}">🗑</button>
+                                        <button class="btn btn-link text-danger p-0" aria-label="Hapus {{ $p->name }}">Hapus</button>
                                     </form>
                                 </div>
                             </li>

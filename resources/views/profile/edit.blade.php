@@ -13,7 +13,7 @@
 
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div class="rounded-circle bg-role-bg d-flex align-items-center justify-content-center overflow-hidden fs-3 flex-shrink-0" style="width: 4rem; height: 4rem;">
-                            @if ($user->photo)<img src="{{ asset('storage/'.$user->photo) }}" alt="Foto profil" class="w-100 h-100 object-fit-cover">@else 👤 @endif
+                            @if ($user->photo)<img src="{{ asset('storage/'.$user->photo) }}" alt="Foto profil" class="w-100 h-100 object-fit-cover">@endif
                         </div>
                         <div class="flex-grow-1">
                             <input type="file" name="photo" accept="image/png,image/jpeg,image/webp" class="form-control form-control-sm">

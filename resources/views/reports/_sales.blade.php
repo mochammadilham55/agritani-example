@@ -36,8 +36,8 @@
 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
     <p class="mb-0 small text-secondary">Periode <strong>{{ $from->format('d M Y') }}</strong> – <strong>{{ $to->format('d M Y') }}</strong></p>
     <div class="d-flex gap-2 no-print">
-        <a href="{{ route($route, array_merge(request()->query(), ['export' => 'csv'])) }}" class="btn btn-outline-secondary btn-sm">⬇ Unduh CSV</a>
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-print>🖨 Cetak</button>
+        <a href="{{ route($route, array_merge(request()->query(), ['export' => 'csv'])) }}" class="btn btn-outline-secondary btn-sm">Unduh CSV</a>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-print>Cetak</button>
     </div>
 </div>
 

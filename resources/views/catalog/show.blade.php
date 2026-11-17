@@ -11,7 +11,7 @@
                 @if ($product->image)
                     <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="object-fit-cover w-100 h-100">
                 @else
-                    <div class="d-flex align-items-center justify-content-center" style="font-size: 6rem;" aria-hidden="true">🌿</div>
+                    <div class="d-flex align-items-center justify-content-center" style="font-size: 6rem;" aria-hidden="true"></div>
                 @endif
             </div>
         </div>
@@ -40,7 +40,7 @@
                 <form method="POST" action="{{ route('pembeli.cart.store', $product) }}" class="d-flex align-items-center gap-3 mt-4">
                     @csrf
                     <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control" style="width: 6rem;" aria-label="Jumlah">
-                    <button class="btn btn-primary fw-semibold">🛒 Tambah ke Keranjang</button>
+                    <button class="btn btn-primary fw-semibold">Tambah ke Keranjang</button>
                 </form>
                 @guest<p class="small text-secondary mt-2 mb-0">Anda akan diminta masuk terlebih dahulu.</p>@endguest
             @endif
