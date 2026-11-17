@@ -84,25 +84,28 @@ trait BuildsSalesReport
         return response()->streamDownload(function () use ($report) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF"); // BOM supaya Excel membaca UTF-8
+            fwrite($out, "sep=;\n");       // Excel regional Indonesia memakai titik koma sebagai pemisah kolom
 
-            fputcsv($out, ['Laporan Penjualan AgriTani']);
-            fputcsv($out, ['Periode', $report['from']->format('d/m/Y').' - '.$report['to']->format('d/m/Y')]);
-            fputcsv($out, []);
-            fputcsv($out, ['No. Pesanan', 'Tanggal', 'Pembeli', 'Produk', 'Status', 'Total (Rp)']);
+            $write = fn (array $cells) => fputcsv($out, $cells, ';');
+
+            $write(['Laporan Penjualan AgriTani']);
+            $write(['Periode', $report['from']->format('d/m/Y').' - '.$report['to']->format('d/m/Y')]);
+            $write([]);
+            $write(['No. Pesanan', 'Tanggal', 'Pembeli', 'Produk', 'Status', 'Total (Rp)']);
 
             foreach ($report['rows'] as $row) {
-                fputcsv($out, [
+                $write([
                     $row->order->id,
                     $row->order->created_at->format('d/m/Y'),
                     $row->order->buyer->name,
-                    $row->items->map(fn ($i) => $i->product->name.' x'.$i->quantity)->join('; '),
+                    $row->items->map(fn ($i) => $i->product->name.' x'.$i->quantity)->join(', '),
                     $row->order->status,
                     (int) $row->amount,
                 ]);
             }
 
-            fputcsv($out, []);
-            fputcsv($out, ['Pendapatan (pesanan selesai)', '', '', '', '', (int) $report['summary']->revenue]);
+            $write([]);
+            $write(['Pendapatan (pesanan selesai)', '', '', '', '', (int) $report['summary']->revenue]);
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }

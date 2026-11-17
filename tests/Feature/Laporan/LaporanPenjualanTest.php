@@ -86,6 +86,9 @@ class LaporanPenjualanTest extends TestCase
 
         $csv = $response->streamedContent();
         $this->assertStringContainsString('Bayam x2', $csv);
+        $this->assertStringContainsString("sep=;
+", $csv);                 // Excel regional Indonesia
+        $this->assertStringContainsString('"No. Pesanan";Tanggal;Pembeli;Produk;Status;"Total (Rp)"', $csv);
         $this->assertStringNotContainsString('Kol', $csv);
     }
 
