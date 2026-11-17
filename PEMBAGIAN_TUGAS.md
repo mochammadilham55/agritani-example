@@ -5,66 +5,72 @@ Jalankan test modul sendiri: `php artisan test tests/Feature/<Folder>`.
 
 | Anggota | Modul | Route | Folder test |
 |---|---|---|---|
-| 1 | Petani & Produk | `routes/modules/1-petani-produk.php` | `tests/Feature/PetaniProduk` |
-| 2 | Pesanan | `routes/modules/2-pesanan.php` | `tests/Feature/Pesanan` |
-| 3 | Pembayaran & Pengiriman | `routes/modules/3-pembayaran-pengiriman.php` | `tests/Feature/PembayaranPengiriman` |
-| 4 | Laporan, Dashboard & **Ulasan** | `routes/modules/4-laporan.php`, `4-ulasan.php` | `tests/Feature/Laporan`, `tests/Feature/Ulasan` |
+| 1 | Akun & Admin | `routes/modules/1-akun-admin.php` | `tests/Feature/AkunAdmin` |
+| 2 | Produk & Katalog | `routes/modules/2-produk.php` | `tests/Feature/Produk` |
+| 3 | Belanja (sisi pembeli) | `routes/modules/3-belanja.php` | `tests/Feature/Belanja` |
+| 4 | Pesanan Masuk (sisi petani) | `routes/modules/4-pesanan-masuk.php` | `tests/Feature/PesananMasuk` |
 
-Nama tabel di spesifikasi → tabel di proyek: petani/pembeli → `users` (kolom `role`), produk → `products`,
-kategori_produk → `categories`, pesanan → `orders`, detail_pesanan → `order_items`,
-pengiriman → `shipments`, pembayaran → `payments`.
+Urutan pengerjaan (karena foreign key): **1 → 2 → 3 → 4**.
 
 ---
 
-## Anggota 1 — Petani & Produk
-- **Model:** `User` (sisi petani), `Product`, `Category`
-- **Migration:** `create_products_table`, `create_categories_table`, `add_suspension_to_products_table`
-- **Controller:** `Petani/ProductController`, `Admin/FarmerController`, `Admin/ProductController`, `Admin/CategoryController`, `ProfileController`
-- **View:** `petani/products/*`, `admin/farmers/*`, `admin/products/*`, `admin/categories/*`, `profile/edit`
+## Anggota 1 — Akun & Admin
+**Tabel:** `users`
+- **Model:** `User`
+- **Migration:** `create_users_table` (bawaan Laravel, sudah memuat kolom `role` dan `is_active`)
+- **Controller:** `Auth/AuthController`, `Auth/PasswordResetController` (lupa password), `ProfileController` (profil dan ubah password), `Admin/DashboardController`, `Admin/FarmerController`, `Admin/OrderController`
+- **Middleware:** `RoleMiddleware` (membatasi akses per peran)
+- **View:** `auth/*` (login, register, lupa dan reset password), `profile/edit`, `admin/dashboard`, `admin/farmers/*`, `admin/orders/*`
+- **Seeder:** `UserSeeder`
+- **Test:** `AuthTest`, `LupaPasswordTest`, `ProfilTest`, `KelolaPetaniTest`, `PesananAdminTest`
+V
+**Yang dijelaskan saat presentasi:** registrasi (petani menunggu aktivasi admin), lupa dan ubah password, login dan pengalihan ke dashboard sesuai peran, bagaimana `RoleMiddleware` menolak akses lintas peran, dan kenapa petani yang dinonaktifkan produknya hilang dari katalog.
+
+## Anggota 2 — Produk & Katalog
+**Tabel:** `categories`, `products`
+- **Model:** `Category`, `Product`
+- **Migration:** `create_categories_table`, `create_products_table`
+- **Controller:** `CatalogController`, `Petani/ProductController`, `Admin/CategoryController`
+- **View:** `catalog/*`, `petani/products/*`, `admin/categories/*`, komponen `product-card`
 - **Seeder:** `CategorySeeder`, `ProductSeeder`
-- **Penjaga file inti** (lihat bagian bawah)
+- **Test:** `ProdukPetaniTest`, `KategoriTest`
 
-## Anggota 2 — Pesanan
-- **Model:** `Order`, `OrderItem`, `Cart`
+**Yang dijelaskan saat presentasi:** CRUD produk dengan upload foto, slug otomatis dan unik, pencarian dan filter di katalog, petani hanya bisa mengubah produk miliknya, kategori yang sedang dipakai tidak bisa dihapus.
+
+## Anggota 3 — Belanja (sisi pembeli)
+**Tabel:** `carts`, `orders`, `order_items`
+- **Model:** `Cart`, `Order`, `OrderItem`
 - **Migration:** `create_orders_table`, `create_order_items_table`, `create_carts_table`
-- **Controller:** `CatalogController`, `Pembeli/CartController`, `Pembeli/CheckoutController`, `Pembeli/OrderController`, `Pembeli/DashboardController`, `Petani/OrderController`, `Admin/OrderController`
-- **View:** `catalog/*`, `pembeli/cart`, `pembeli/checkout`, `pembeli/orders/*`, `pembeli/dashboard`, `petani/orders/*`, `admin/orders/*`, `layouts/public`, komponen `product-card` & `orders-table`
+- **Controller:** `Pembeli/CartController`, `Pembeli/CheckoutController`, `Pembeli/OrderController`, `Pembeli/DashboardController`
+- **View:** `pembeli/*`
 - **Config:** `config/agritani.php` (ongkir)
+- **Test:** `KatalogKeranjangTest`, `CheckoutPesananTest`, `BuktiBayarTest`
 
-## Anggota 3 — Pembayaran & Pengiriman
-- **Model:** `Payment`, `Shipment`
-- **Migration:** `create_payments_table`, `create_shipments_table`
-- **Controller:** `Petani/PaymentController`, `Petani/ShipmentController`
-- **View:** `petani/payments/*`, `petani/shipments/*`
-- **Bersama Anggota 2:** method `uploadProof` di `Pembeli/OrderController` (kode di modul 2, aturan bayar milik modul 3)
+**Yang dijelaskan saat presentasi:** alur keranjang sampai checkout, pesanan dipecah per petani, stok berkurang dalam satu transaksi database (gagal satu, batal semua), pembatalan mengembalikan stok, upload bukti transfer.
 
-## Anggota 4 — Laporan, Dashboard, dan SEMUA fitur Ulasan
-- **Model:** `Review`
-- **Migration:** `create_reviews_table`
-- **Controller:** `Pembeli/ReviewController`, `Admin/ReviewController`, `Petani/ReportController`, `Admin/ReportController`, `Petani/DashboardController`, `Admin/DashboardController`, trait `Concerns/HandlesReports`
-- **View:** `pembeli/reviews/*`, `admin/reviews/*`, `petani/reports/*`, `admin/reports/*`, `petani/dashboard`, `admin/dashboard`, komponen `stat-card`
-- **Seeder:** `DemoSeeder` (pesanan, pembayaran, ulasan contoh)
-- **Fitur ulasan:** pembeli menulis/mengedit ulasan (hanya setelah pesanan Selesai), ulasan baru berstatus menunggu moderasi, admin menyetujui/menolak, ulasan yang disetujui tampil di halaman produk dan masuk hitungan rating.
-- **Belum ada (tugas):** export laporan ke PDF/print, dan pilihan laporan per bulan.
+## Anggota 4 — Pesanan Masuk (sisi petani)
+**Tabel:** `payments` (plus kolom `courier`, `tracking_number`, `shipped_at` di `orders`)
+- **Model:** `Payment`
+- **Migration:** `create_payments_table`
+- **Controller:** `Petani/OrderController`, `Petani/PaymentController`, `Petani/ShipmentController`, `Petani/DashboardController`
+- **View:** `petani/orders/*`, `petani/payments/*`, `petani/shipments/*`, `petani/dashboard`, komponen `stat-card`
+- **Seeder:** `DemoSeeder` (pesanan contoh untuk dashboard)
+- **Test:** `PesananPetaniTest`, `PembayaranTest`, `PengirimanTest`, `DashboardTest`
+
+**Yang dijelaskan saat presentasi:** petani hanya melihat pesanan produk miliknya, transfer harus dikonfirmasi sebelum pesanan diproses, perubahan status `pending → diproses → dikirim`, pengisian resi, dan statistik dashboard.
 
 ---
+
+## File inti (ubah hanya setelah disepakati bersama)
+`routes/web.php`, `app/Http/Middleware/RoleMiddleware.php`, `resources/views/layouts/*` (termasuk `sidebar`), komponen `badge`, `resources/css/app.css`, `DatabaseSeeder`.
 
 ## Titik singgung antar modul (koordinasi sebelum mengubah)
 | Yang dipakai | Milik | Dipakai oleh |
 |---|---|---|
-| `catalog/show.blade.php` & `CatalogController::show` menampilkan ulasan disetujui | Anggota 2 | Anggota 4 |
-| `Product::reviews()` & `Product::averageRating()` | Anggota 1 (model Product) | Anggota 4 |
-| Status pesanan `selesai` membuka form ulasan | Anggota 2 | Anggota 4 |
-| `Order::forFarmer()`, `grandTotal()` | Anggota 2 | Anggota 3, 4 |
-| `Product::active()` / `isPurchasable()` | Anggota 1 | Anggota 2 |
-
-## File inti (dipakai bersama — perubahan lewat pull request, direview Anggota 1)
-`routes/web.php`, `layouts/app`, `layouts/guest`, `layouts/partials/sidebar`, komponen `badge`,
-`RoleMiddleware`, `AuthController`, `UserSeeder`, migration `users`, `resources/css/app.css`, test di `tests/Feature/Core`.
-Saat menambah menu sidebar atau route baru, tambahkan di file modul sendiri; sidebar hanya perlu satu baris di `sidebar.blade.php`.
-
-## Aturan kerja
-1. Satu branch per fitur, merge lewat pull request.
-2. Jangan mengubah file modul anggota lain tanpa memberi tahu pemiliknya.
-3. Sebelum push: `php artisan test` harus hijau (semua modul).
-4. Migration baru diberi nama bertanggal; jangan mengedit migration yang sudah di-merge.
+| `Product::active()` dan `isPurchasable()` | Anggota 2 | Anggota 3 |
+| Halaman detail produk (`catalog/show`) memuat tombol keranjang | Anggota 2 | Anggota 3 |
+| Checkout membuat `Payment` | Anggota 3 | Anggota 4 |
+| Upload bukti (`Pembeli/OrderController::uploadProof`) | Anggota 3 | Anggota 4 (yang mengonfirmasi) |
+| `Order::forFarmer()`, `grandTotal()` | Anggota 3 | Anggota 1 dan 4 |
+| Status pesanan `dikirim` membuka tombol "Pesanan Diterima" | Anggota 4 | Anggota 3 |
+| Petani nonaktif menyembunyikan produknya | Anggota 1 | Anggota 2 dan 3 |

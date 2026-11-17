@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['user_id', 'total_price', 'status', 'shipping_address', 'shipping_cost', 'notes'])]
+#[Fillable(['user_id', 'total_price', 'status', 'shipping_address', 'shipping_cost', 'notes', 'courier', 'tracking_number', 'shipped_at'])]
 class Order extends Model
 {
     public const STATUS_PENDING = 'pending';
@@ -31,6 +31,7 @@ class Order extends Model
         return [
             'total_price' => 'decimal:2',
             'shipping_cost' => 'decimal:2',
+            'shipped_at' => 'datetime',
         ];
     }
 
@@ -47,16 +48,6 @@ class Order extends Model
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);
-    }
-
-    public function shipment(): HasOne
-    {
-        return $this->hasOne(Shipment::class);
-    }
-
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(Review::class);
     }
 
     public function scopeStatus(Builder $query, ?string $status): Builder

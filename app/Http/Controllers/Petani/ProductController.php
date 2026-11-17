@@ -82,10 +82,6 @@ class ProductController extends Controller
     {
         $this->authorizeOwner($product);
 
-        if ($product->is_suspended) {
-            return back()->with('error', 'Produk ini diturunkan oleh admin dan tidak dapat diaktifkan sendiri.');
-        }
-
         $product->update(['is_active' => ! $product->is_active]);
 
         return back()->with('success', $product->is_active ? 'Produk diaktifkan.' : 'Produk dinonaktifkan.');

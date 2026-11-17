@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Review;
 
 class DashboardController extends Controller
 {
@@ -22,8 +21,7 @@ class DashboardController extends Controller
             'productCount' => Product::where('user_id', $farmerId)->count(),
             'soldQty' => (clone $soldItems)->sum('quantity'),
             'revenue' => (clone $soldItems)->sum('subtotal'),
-            'rating' => round((float) Review::approved()
-                ->whereHas('product', fn ($q) => $q->where('user_id', $farmerId))->avg('rating'), 1),
+            'newOrders' => Order::forFarmer($farmerId)->where('status', Order::STATUS_PENDING)->count(),
             'lowStock' => Product::where('user_id', $farmerId)->lowStock()->orderBy('stock')->limit(5)->get(),
             'recentOrders' => Order::forFarmer($farmerId)->with('buyer')->latest()->limit(5)->get(),
         ]);

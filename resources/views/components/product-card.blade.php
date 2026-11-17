@@ -19,8 +19,6 @@
             <span>{{ $product->farmer?->name }}</span>
             @if ($product->stock < 1)
                 <x-badge status="dibatalkan" label="Habis" />
-            @elseif (isset($product->avg_rating) && $product->avg_rating)
-                <span>⭐ {{ number_format($product->avg_rating, 1) }}</span>
             @endif
         </div>
     </div>

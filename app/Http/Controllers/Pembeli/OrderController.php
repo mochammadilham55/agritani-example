@@ -28,7 +28,7 @@ class OrderController extends Controller
     {
         $this->authorizeOwner($order);
 
-        $order->load(['items.product.farmer', 'payment', 'shipment', 'reviews']);
+        $order->load(['items.product.farmer', 'payment']);
 
         return view('pembeli.orders.show', ['order' => $order]);
     }
@@ -94,9 +94,8 @@ class OrderController extends Controller
         }
 
         $order->update(['status' => Order::STATUS_SELESAI]);
-        $order->shipment?->update(['status' => 'tiba']);
 
-        return back()->with('success', 'Terima kasih! Anda kini dapat memberi ulasan.');
+        return back()->with('success', 'Terima kasih! Pesanan ditandai selesai.');
     }
 
     private function authorizeOwner(Order $order): void

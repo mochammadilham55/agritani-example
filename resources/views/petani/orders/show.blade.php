@@ -34,8 +34,8 @@
                 <p class="font-medium">{{ $order->buyer->name }} <span class="font-normal text-gray-500">· {{ $order->buyer->phone ?? '-' }}</span></p>
                 <p class="mt-1 text-gray-600">{{ $order->shipping_address }}</p>
                 @if ($order->notes)<p class="mt-1 text-xs text-gray-400">Catatan: {{ $order->notes }}</p>@endif
-                @if ($order->shipment?->tracking_number)
-                    <p class="mt-3">Kurir: <strong>{{ $order->shipment->courier }}</strong> · Resi: <span class="font-mono">{{ $order->shipment->tracking_number }}</span> <x-badge :status="$order->shipment->status" /></p>
+                @if ($order->tracking_number)
+                    <p class="mt-3">Kurir: <strong>{{ $order->courier }}</strong> · Resi: <span class="font-mono">{{ $order->tracking_number }}</span></p>
                 @endif
             </section>
         </div>

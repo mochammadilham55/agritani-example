@@ -20,7 +20,6 @@ class Product extends Model
             'stock' => 'integer',
             'weight' => 'integer',
             'is_active' => 'boolean',
-            'is_suspended' => 'boolean',
         ];
     }
 
@@ -39,27 +38,21 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(Review::class);
-    }
-
     public function carts(): HasMany
     {
         return $this->hasMany(Cart::class);
     }
 
-    /** Produk yang tampil & bisa dibeli: aktif, tidak diturunkan admin, petaninya aktif. */
+    /** Produk yang tampil & bisa dibeli: aktif dan petaninya aktif. */
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)
-            ->where('is_suspended', false)
             ->whereHas('farmer', fn ($f) => $f->where('is_active', true));
     }
 
     public function isPurchasable(): bool
     {
-        return $this->is_active && ! $this->is_suspended && (bool) $this->farmer?->is_active;
+        return $this->is_active && (bool) $this->farmer?->is_active;
     }
 
     public function scopeLowStock(Builder $query): Builder
@@ -80,12 +73,6 @@ class Product extends Model
             'desc' => $query->orderByDesc('price'),
             default => $query->latest(),
         };
-    }
-
-    /** Rata-rata rating dari ulasan yang sudah disetujui. */
-    public function averageRating(): float
-    {
-        return round((float) $this->reviews()->where('is_approved', true)->avg('rating'), 1);
     }
 
     public function getRouteKeyName(): string

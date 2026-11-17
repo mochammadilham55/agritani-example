@@ -41,6 +41,7 @@ class ProfileController extends Controller
         return back()->with('success', 'Profil diperbarui.');
     }
 
+    /** Ubah password: wajib mengisi password saat ini. */
     public function password(Request $request): RedirectResponse
     {
         $data = $request->validate([

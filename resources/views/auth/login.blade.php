@@ -20,13 +20,15 @@
         </div>
         <div>
             <label for="password" class="mb-1 block text-sm font-medium">Password</label>
-            <input id="password" name="password" type="password" required
-                   class="w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
+            <x-password-input id="password" name="password" required />
             @error('password')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
         </div>
-        <label class="flex items-center gap-2 text-sm text-gray-600">
-            <input type="checkbox" name="remember" class="rounded border-line text-brand"> Ingat saya
-        </label>
+        <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2 text-gray-600">
+                <input type="checkbox" name="remember" class="rounded border-line text-brand"> Ingat saya
+            </label>
+            <a href="{{ route('password.request') }}" class="font-semibold text-brand hover:underline">Lupa password?</a>
+        </div>
         <button type="submit" class="w-full rounded-lg bg-brand py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">Masuk</button>
     </form>
 

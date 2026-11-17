@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Petani;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Models\Shipment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +25,7 @@ class OrderController extends Controller
 
     public function show(int $id)
     {
-        $order = $this->findOrder($id)->load(['buyer', 'items.product', 'payment', 'shipment']);
+        $order = $this->findOrder($id)->load(['buyer', 'items.product', 'payment']);
 
         return view('petani.orders.show', ['order' => $order]);
     }
@@ -44,10 +43,7 @@ class OrderController extends Controller
             return back()->with('error', 'Konfirmasi pembayaran transfer terlebih dahulu di menu Pembayaran.');
         }
 
-        DB::transaction(function () use ($order) {
-            $order->update(['status' => Order::STATUS_DIPROSES]);
-            Shipment::firstOrCreate(['order_id' => $order->id], ['status' => Shipment::STATUS_DISIAPKAN]);
-        });
+        $order->update(['status' => Order::STATUS_DIPROSES]);
 
         return back()->with('success', 'Pesanan dikonfirmasi dan siap dikemas.');
     }

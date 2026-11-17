@@ -3,10 +3,10 @@
 
 ## Modul
 <!-- Centang satu: sesuai PEMBAGIAN_TUGAS.md -->
-- [ ] Anggota 1: Petani & Produk
-- [ ] Anggota 2: Pesanan
-- [ ] Anggota 3: Pembayaran & Pengiriman
-- [ ] Anggota 4: Laporan, Dashboard & Ulasan
+- [ ] Anggota 1: Akun & Admin
+- [ ] Anggota 2: Produk & Katalog
+- [ ] Anggota 3: Belanja (sisi pembeli)
+- [ ] Anggota 4: Pesanan Masuk (sisi petani)
 - [ ] File inti (sudah didiskusikan dengan ketua tim)
 
 ## Cara mencoba

@@ -44,7 +44,7 @@
             @foreach ([['current_password', 'Password saat ini'], ['password', 'Password baru'], ['password_confirmation', 'Konfirmasi password baru']] as [$f, $label])
                 <div>
                     <label for="{{ $f }}" class="mb-1 block text-sm font-medium">{{ $label }}</label>
-                    <input id="{{ $f }}" name="{{ $f }}" type="password" required class="{{ $input }}">
+                    <x-password-input :id="$f" :name="$f" required />
                     @error($f)<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
                 </div>
             @endforeach

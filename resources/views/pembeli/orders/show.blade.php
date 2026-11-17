@@ -42,13 +42,6 @@
                             </span>
                             <span class="text-right">
                                 <span class="block font-semibold">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
-                                @if ($order->status === 'selesai')
-                                    @if ($reviewed = $order->reviews->firstWhere('product_id', $item->product_id))
-                                        <a href="{{ route('pembeli.reviews.edit', $reviewed) }}" class="text-xs text-brand hover:underline">Lihat/ubah ulasan</a>
-                                    @else
-                                        <a href="{{ route('pembeli.reviews.create', [$order, $item->product]) }}" class="text-xs font-semibold text-brand hover:underline">⭐ Beri ulasan</a>
-                                    @endif
-                                @endif
                             </span>
                         </li>
                     @endforeach
@@ -65,14 +58,10 @@
                 <p class="text-gray-600">{{ $order->shipping_address }}</p>
                 @if ($order->notes)<p class="mt-1 text-xs text-gray-400">Catatan: {{ $order->notes }}</p>@endif
 
-                @if ($order->shipment && $order->shipment->tracking_number)
+                @if ($order->tracking_number)
                     <dl class="mt-3 grid grid-cols-2 gap-1">
-                        <dt class="text-gray-500">Kurir</dt><dd>{{ $order->shipment->courier }}</dd>
-                        <dt class="text-gray-500">No. Resi</dt><dd class="font-mono">{{ $order->shipment->tracking_number }}</dd>
-                        <dt class="text-gray-500">Status</dt><dd><x-badge :status="$order->shipment->status" /></dd>
-                        @if ($order->shipment->estimated_arrival)
-                            <dt class="text-gray-500">Estimasi tiba</dt><dd>{{ $order->shipment->estimated_arrival->format('d M Y') }}</dd>
-                        @endif
+                        <dt class="text-gray-500">Kurir</dt><dd>{{ $order->courier }}</dd>
+                        <dt class="text-gray-500">No. Resi</dt><dd class="font-mono">{{ $order->tracking_number }}</dd>
                     </dl>
                 @else
                     <p class="mt-3 text-xs text-gray-400">Resi akan muncul setelah petani mengirim pesanan.</p>

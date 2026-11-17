@@ -45,8 +45,8 @@
             </section>
             <section class="rounded-xl border border-line bg-white p-5">
                 <h2 class="mb-2 font-bold text-brand-dark">Pengiriman</h2>
-                @if ($order->shipment?->tracking_number)
-                    <p>{{ $order->shipment->courier }} · <span class="font-mono">{{ $order->shipment->tracking_number }}</span> <x-badge :status="$order->shipment->status" /></p>
+                @if ($order->tracking_number)
+                    <p>{{ $order->courier }} · <span class="font-mono">{{ $order->tracking_number }}</span></p>
                 @else
                     <p class="text-gray-400">Belum dikirim.</p>
                 @endif

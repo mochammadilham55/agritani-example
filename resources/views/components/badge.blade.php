@@ -12,10 +12,10 @@
 
     [$bg, $fg] = match ($key) {
         'pending', 'menunggu', 'nonaktif' => $gray,
-        'diproses', 'disiapkan' => $amber,
+        'diproses' => $amber,
         'dikirim' => $blue,
-        'selesai', 'aktif', 'dikonfirmasi', 'tiba', 'disetujui' => $green,
-        'dibatalkan', 'ditangguhkan', 'ditolak' => $red,
+        'selesai', 'aktif', 'dikonfirmasi' => $green,
+        'dibatalkan', 'ditolak' => $red,
         default => $gray,
     };
 @endphp
