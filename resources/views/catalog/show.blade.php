@@ -3,57 +3,56 @@
 @section('title', $product->name.' — AgriTani')
 
 @section('content')
-    <a href="{{ route('home') }}" class="text-sm text-gray-500 hover:underline">← Kembali ke katalog</a>
+    <a href="{{ route('home') }}" class="small text-secondary">← Kembali ke katalog</a>
 
-    <div class="mt-4 grid gap-8 md:grid-cols-2">
-        <div class="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-line bg-role-bg text-8xl">
-            @if ($product->image)
-                <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
-            @else
-                <span aria-hidden="true">🌿</span>
-            @endif
+    <div class="row g-4 mt-1">
+        <div class="col-md-6">
+            <div class="ratio ratio-1x1 rounded-4 border bg-role-bg overflow-hidden">
+                @if ($product->image)
+                    <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="object-fit-cover w-100 h-100">
+                @else
+                    <div class="d-flex align-items-center justify-content-center" style="font-size: 6rem;" aria-hidden="true">🌿</div>
+                @endif
+            </div>
         </div>
 
-        <div>
-            <p class="text-sm text-gray-500">{{ $product->category?->name }}</p>
-            <h1 class="text-2xl font-extrabold text-brand-dark">{{ $product->name }}</h1>
-            <p class="mt-1 text-sm text-gray-500">
-                Petani: <strong>{{ $product->farmer?->name }}</strong>
+        <div class="col-md-6">
+            <p class="small text-secondary mb-1">{{ $product->category?->name }}</p>
+            <h1 class="fs-2 fw-bold text-brand-dark">{{ $product->name }}</h1>
+            <p class="small text-secondary">Petani: <strong>{{ $product->farmer?->name }}</strong></p>
+
+            <p class="display-6 fw-bold text-brand-dark mb-3">
+                Rp {{ number_format($product->price, 0, ',', '.') }}<span class="fs-6 fw-normal text-secondary"> / {{ $product->unit }}</span>
             </p>
 
-            <p class="mt-4 text-3xl font-extrabold text-brand-dark">
-                Rp {{ number_format($product->price, 0, ',', '.') }}<span class="text-base font-normal text-gray-500"> / {{ $product->unit }}</span>
-            </p>
-
-            <dl class="mt-4 grid grid-cols-2 gap-2 text-sm">
-                <dt class="text-gray-500">Stok</dt>
-                <dd>@if ($product->stock > 0) {{ $product->stock }} {{ $product->unit }} @else <x-badge status="dibatalkan" label="Habis" /> @endif</dd>
-                <dt class="text-gray-500">Berat</dt>
-                <dd>{{ number_format($product->weight, 0, ',', '.') }} gram / {{ $product->unit }}</dd>
+            <dl class="row small mb-3">
+                <dt class="col-4 fw-normal text-secondary">Stok</dt>
+                <dd class="col-8">@if ($product->stock > 0) {{ $product->stock }} {{ $product->unit }} @else <x-badge status="dibatalkan" label="Habis" /> @endif</dd>
+                <dt class="col-4 fw-normal text-secondary">Berat</dt>
+                <dd class="col-8">{{ number_format($product->weight, 0, ',', '.') }} gram / {{ $product->unit }}</dd>
             </dl>
 
             @if ($product->description)
-                <p class="mt-4 text-sm leading-relaxed text-gray-700">{{ $product->description }}</p>
+                <p class="small">{{ $product->description }}</p>
             @endif
 
             @if ($product->stock > 0 && (! auth()->check() || auth()->user()->isPembeli()))
-                <form method="POST" action="{{ route('pembeli.cart.store', $product) }}" class="mt-6 flex items-center gap-3">
+                <form method="POST" action="{{ route('pembeli.cart.store', $product) }}" class="d-flex align-items-center gap-3 mt-4">
                     @csrf
-                    <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}"
-                           class="w-24 rounded-lg border border-line px-3 py-2 text-sm" aria-label="Jumlah">
-                    <button class="rounded-lg bg-brand px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">🛒 Tambah ke Keranjang</button>
+                    <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control" style="width: 6rem;" aria-label="Jumlah">
+                    <button class="btn btn-primary fw-semibold">🛒 Tambah ke Keranjang</button>
                 </form>
-                @guest<p class="mt-2 text-xs text-gray-500">Anda akan diminta masuk terlebih dahulu.</p>@endguest
+                @guest<p class="small text-secondary mt-2 mb-0">Anda akan diminta masuk terlebih dahulu.</p>@endguest
             @endif
         </div>
     </div>
 
     @if ($related->isNotEmpty())
-        <section class="mt-12">
-            <h2 class="mb-3 font-bold text-brand-dark">Produk Serupa</h2>
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <section class="mt-5">
+            <h2 class="h6 fw-bold text-brand-dark mb-3">Produk Serupa</h2>
+            <div class="row row-cols-2 row-cols-md-4 g-3">
                 @foreach ($related as $item)
-                    <x-product-card :product="$item" />
+                    <div class="col"><x-product-card :product="$item" /></div>
                 @endforeach
             </div>
         </section>

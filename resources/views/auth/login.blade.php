@@ -3,36 +3,36 @@
 @section('title', 'Masuk — AgriTani')
 
 @section('content')
-    <h1 class="text-xl font-bold text-brand-dark">Masuk</h1>
-    <p class="mb-6 mt-1 text-sm text-gray-500">Masuk untuk berbelanja atau mengelola hasil tani Anda.</p>
+    <h1 class="h4 fw-bold text-brand-dark">Masuk</h1>
+    <p class="small text-secondary mb-4">Masuk untuk berbelanja atau mengelola hasil tani Anda.</p>
 
     @if (session('status'))
-        <div class="mb-4 rounded-lg bg-[#DDF0DA] px-4 py-3 text-sm text-[#1F5A22]">{{ session('status') }}</div>
+        <div class="alert alert-success py-2 small">{{ session('status') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-4">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
-        <div>
-            <label for="email" class="mb-1 block text-sm font-medium">Email</label>
-            <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
-                   class="w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">
-            @error('email')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
+        <div class="mb-3">
+            <label for="email" class="form-label small fw-medium">Email</label>
+            <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus class="form-control">
+            @error('email')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
         </div>
-        <div>
-            <label for="password" class="mb-1 block text-sm font-medium">Password</label>
+        <div class="mb-3">
+            <label for="password" class="form-label small fw-medium">Password</label>
             <x-password-input id="password" name="password" required />
-            @error('password')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
+            @error('password')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
         </div>
-        <div class="flex items-center justify-between text-sm">
-            <label class="flex items-center gap-2 text-gray-600">
-                <input type="checkbox" name="remember" class="rounded border-line text-brand"> Ingat saya
-            </label>
-            <a href="{{ route('password.request') }}" class="font-semibold text-brand hover:underline">Lupa password?</a>
+        <div class="d-flex align-items-center justify-content-between small mb-3">
+            <div class="form-check mb-0">
+                <input type="checkbox" name="remember" id="remember" class="form-check-input">
+                <label for="remember" class="form-check-label text-secondary">Ingat saya</label>
+            </div>
+            <a href="{{ route('password.request') }}" class="fw-semibold">Lupa password?</a>
         </div>
-        <button type="submit" class="w-full rounded-lg bg-brand py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">Masuk</button>
+        <button type="submit" class="btn btn-primary w-100 fw-semibold">Masuk</button>
     </form>
 
-    <p class="mt-6 text-center text-sm text-gray-500">
-        Belum punya akun? <a href="{{ route('register') }}" class="font-semibold text-brand hover:underline">Daftar</a>
+    <p class="mt-4 mb-0 text-center small text-secondary">
+        Belum punya akun? <a href="{{ route('register') }}" class="fw-semibold">Daftar</a>
     </p>
 @endsection

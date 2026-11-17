@@ -6,80 +6,78 @@
 @section('heading', $editing ? 'Edit Produk' : 'Tambah Produk')
 
 @section('content')
-    @php
-        $input = 'w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20';
-    @endphp
-
-    <form method="POST" enctype="multipart/form-data" class="max-w-2xl space-y-4 rounded-xl border border-line bg-white p-6"
+    <form method="POST" enctype="multipart/form-data" class="card" style="max-width: 42rem;"
           action="{{ $editing ? route('petani.products.update', $product) : route('petani.products.store') }}">
         @csrf
         @if ($editing) @method('PUT') @endif
 
-        <div>
-            <label class="mb-1 block text-sm font-medium" for="name">Nama produk</label>
-            <input id="name" name="name" value="{{ old('name', $product->name) }}" required class="{{ $input }}">
-            @error('name')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
-        </div>
-
-        <div>
-            <label class="mb-1 block text-sm font-medium" for="category_id">Kategori</label>
-            <select id="category_id" name="category_id" required class="{{ $input }}">
-                <option value="">Pilih kategori</option>
-                @foreach ($categories as $c)
-                    <option value="{{ $c->id }}" @selected((int) old('category_id', $product->category_id) === $c->id)>{{ $c->name }}</option>
-                @endforeach
-            </select>
-            @error('category_id')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-                <label class="mb-1 block text-sm font-medium" for="price">Harga (Rp)</label>
-                <input id="price" name="price" type="number" min="100" step="1" value="{{ old('price', $product->price ? (int) $product->price : '') }}" required class="{{ $input }}">
-                @error('price')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
+        <div class="card-body p-4">
+            <div class="mb-3">
+                <label class="form-label small fw-medium" for="name">Nama produk</label>
+                <input id="name" name="name" value="{{ old('name', $product->name) }}" required class="form-control">
+                @error('name')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
             </div>
-            <div>
-                <label class="mb-1 block text-sm font-medium" for="stock">Stok</label>
-                <input id="stock" name="stock" type="number" min="0" value="{{ old('stock', $product->stock ?? 0) }}" required class="{{ $input }}">
-                @error('stock')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
+
+            <div class="mb-3">
+                <label class="form-label small fw-medium" for="category_id">Kategori</label>
+                <select id="category_id" name="category_id" required class="form-select">
+                    <option value="">Pilih kategori</option>
+                    @foreach ($categories as $c)
+                        <option value="{{ $c->id }}" @selected((int) old('category_id', $product->category_id) === $c->id)>{{ $c->name }}</option>
+                    @endforeach
+                </select>
+                @error('category_id')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
             </div>
-            <div>
-                <label class="mb-1 block text-sm font-medium" for="unit">Satuan</label>
-                <input id="unit" name="unit" list="units" value="{{ old('unit', $product->unit) }}" required class="{{ $input }}">
-                <datalist id="units"><option value="kg"><option value="gram"><option value="ikat"><option value="sisir"><option value="butir"><option value="liter"></datalist>
-                @error('unit')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
+
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                    <label class="form-label small fw-medium" for="price">Harga (Rp)</label>
+                    <input id="price" name="price" type="number" min="100" step="1" value="{{ old('price', $product->price ? (int) $product->price : '') }}" required class="form-control">
+                    @error('price')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small fw-medium" for="stock">Stok</label>
+                    <input id="stock" name="stock" type="number" min="0" value="{{ old('stock', $product->stock ?? 0) }}" required class="form-control">
+                    @error('stock')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small fw-medium" for="unit">Satuan</label>
+                    <input id="unit" name="unit" list="units" value="{{ old('unit', $product->unit) }}" required class="form-control">
+                    <datalist id="units"><option value="kg"><option value="gram"><option value="ikat"><option value="sisir"><option value="butir"><option value="liter"></datalist>
+                    @error('unit')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label small fw-medium" for="weight">Berat per satuan (gram)</label>
+                    <input id="weight" name="weight" type="number" min="0" value="{{ old('weight', $product->weight ?? 0) }}" required class="form-control">
+                    @error('weight')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                </div>
             </div>
-            <div>
-                <label class="mb-1 block text-sm font-medium" for="weight">Berat per satuan (gram)</label>
-                <input id="weight" name="weight" type="number" min="0" value="{{ old('weight', $product->weight ?? 0) }}" required class="{{ $input }}">
-                @error('weight')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
+
+            <div class="mb-3">
+                <label class="form-label small fw-medium" for="description">Deskripsi</label>
+                <textarea id="description" name="description" rows="4" class="form-control">{{ old('description', $product->description) }}</textarea>
+                @error('description')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
             </div>
-        </div>
 
-        <div>
-            <label class="mb-1 block text-sm font-medium" for="description">Deskripsi</label>
-            <textarea id="description" name="description" rows="4" class="{{ $input }}">{{ old('description', $product->description) }}</textarea>
-            @error('description')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
-        </div>
+            <div class="mb-3">
+                <label class="form-label small fw-medium" for="image">Foto produk</label>
+                @if ($product->image)
+                    <img src="{{ asset('storage/'.$product->image) }}" alt="" class="d-block mb-2 rounded border" style="height: 6rem;">
+                @endif
+                <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" class="form-control">
+                <div class="form-text">JPG/PNG/WebP, maksimal 2 MB.{{ $editing ? ' Kosongkan jika tidak ingin mengganti.' : '' }}</div>
+                @error('image')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+            </div>
 
-        <div>
-            <label class="mb-1 block text-sm font-medium" for="image">Foto produk</label>
-            @if ($product->image)
-                <img src="{{ asset('storage/'.$product->image) }}" alt="" class="mb-2 h-24 rounded-lg border border-line">
-            @endif
-            <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" class="block w-full text-sm">
-            <p class="mt-1 text-xs text-gray-400">JPG/PNG/WebP, maksimal 2 MB.{{ $editing ? ' Kosongkan jika tidak ingin mengganti.' : '' }}</p>
-            @error('image')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
-        </div>
+            <div class="form-check mb-4">
+                <input type="checkbox" name="is_active" id="is_active" value="1" class="form-check-input" @checked(old('is_active', $product->is_active))>
+                <label for="is_active" class="form-check-label small">Tampilkan di katalog (aktif)</label>
+            </div>
 
-        <label class="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="is_active" value="1" class="rounded border-line text-brand" @checked(old('is_active', $product->is_active))>
-            Tampilkan di katalog (aktif)
-        </label>
-
-        <div class="flex gap-3 pt-2">
-            <button class="rounded-lg bg-brand px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">{{ $editing ? 'Simpan Perubahan' : 'Simpan Produk' }}</button>
-            <a href="{{ route('petani.products.index') }}" class="rounded-lg border border-line px-6 py-2.5 text-sm hover:bg-surface">Batal</a>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary fw-semibold px-4">{{ $editing ? 'Simpan Perubahan' : 'Simpan Produk' }}</button>
+                <a href="{{ route('petani.products.index') }}" class="btn btn-outline-secondary px-4">Batal</a>
+            </div>
         </div>
     </form>
 @endsection
