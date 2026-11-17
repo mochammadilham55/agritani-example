@@ -39,6 +39,6 @@
 
     <footer class="border-top py-3 text-center small text-secondary">© {{ date('Y') }} AgriTani — Marketplace hasil pertanian</footer>
 
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    @include('layouts.partials.scripts')
 </body>
 </html>

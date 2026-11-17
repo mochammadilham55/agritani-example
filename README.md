@@ -53,9 +53,50 @@ Aturan yang perlu dijelaskan saat presentasi:
 
 **Pembeli:** katalog dengan pencarian, filter kategori, dan urut harga · keranjang · checkout (transfer/COD) · upload bukti transfer · daftar dan detail pesanan · batalkan pesanan · konfirmasi diterima · edit profil dan ubah password.
 
-**Petani:** tambah/ubah/aktif-nonaktifkan produk (dengan foto) · pesanan masuk (konfirmasi/tolak) · konfirmasi atau tolak bukti pembayaran · isi resi pengiriman · dashboard (jumlah produk, terjual, pendapatan, stok menipis).
+**Petani:** tambah/ubah/aktif-nonaktifkan produk (dengan foto dan pratinjau) · pesanan masuk (konfirmasi/tolak) · konfirmasi atau tolak bukti pembayaran · isi resi pengiriman · dashboard (jumlah produk, terjual, pendapatan, stok menipis) · **laporan penjualan** (filter tanggal dan status, produk terlaris, unduh CSV, cetak).
 
-**Admin:** dashboard (grafik pesanan 7 hari) · kelola petani · kelola kategori · daftar dan detail semua pesanan.
+**Admin:** dashboard (grafik pesanan 7 hari) · kelola petani · kelola kategori · daftar dan detail semua pesanan · **laporan penjualan seluruh toko** (filter, CSV, cetak).
+
+## Use Case Diagram
+```mermaid
+flowchart LR
+    Pembeli([Pembeli])
+    Petani([Petani])
+    Admin([Admin])
+
+    subgraph AgriTani
+        direction TB
+        UC1(Login / Register)
+        UC2(Lupa & ubah password)
+        UC3(Lihat katalog & cari produk)
+        UC4(Kelola keranjang)
+        UC5(Checkout & upload bukti bayar)
+        UC6(Lacak & konfirmasi pesanan)
+        UC7(Kelola produk)
+        UC8(Proses pesanan & isi resi)
+        UC9(Konfirmasi pembayaran)
+        UC10(Laporan penjualan sendiri)
+        UC11(Verifikasi petani)
+        UC12(Kelola kategori)
+        UC13(Laporan penjualan seluruh toko)
+    end
+
+    Pembeli --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6
+    Petani --- UC1 & UC2 & UC7 & UC8 & UC9 & UC10
+    Admin --- UC1 & UC2 & UC11 & UC12 & UC13
+```
+
+## Materi kuliah yang bisa ditunjukkan
+| Materi | Di mana dalam kode |
+|---|---|
+| Router & Middleware | `routes/modules/*.php`, `RoleMiddleware` (`role:admin`, `role:petani`), `auth`, `guest`, `throttle` |
+| Migration & Seeder | `database/migrations/`, `database/seeders/` (`UserSeeder`, `CategorySeeder`, `ProductSeeder`, `DemoSeeder`) |
+| Model, ORM, Relasi | `app/Models/` (`hasMany`, `belongsTo`, `hasOne`), scope `forFarmer`, `search`, `active` |
+| Controller, Request, Response | `ProductRequest` (Form Request), controller per peran, redirect + flash message, respons CSV (`BuildsSalesReport`) |
+| Blade | `layouts/app`, `guest`, `public`, komponen `x-badge`, `x-stat-card`, `x-product-card`, `x-password-input` |
+| Validation | `ProductRequest`, `$request->validate()` di controller lain, pesan error berbahasa Indonesia |
+| Bootstrap & jQuery | Bootstrap 5 (`public/vendor/bootstrap`), jQuery 3.7 (`public/vendor/jquery`), skrip di `public/js/agritani.js` (tombol lihat password, preview foto, cari tabel langsung, cetak) |
+| CRUD & Laporan | CRUD produk dan kategori; laporan penjualan petani (`/petani/laporan`) dan admin (`/admin/laporan`) dengan filter, ringkasan, CSV, dan cetak |
 
 ## Struktur database (6 tabel inti)
 ```mermaid
@@ -87,10 +128,10 @@ Setiap anggota punya **satu file route**, **controller**, **view**, dan **folder
 
 | Anggota | Modul | Yang dikerjakan | Tabel | File route | Folder test |
 |---|---|---|---|---|---|
-| **1** | Akun & Admin | Login, register, logout, lupa password, ubah password, hak akses per peran, profil, dashboard admin, kelola petani, lihat pesanan (admin) | `users` | `1-akun-admin.php` | `AkunAdmin` |
-| **2** | Produk & Katalog | Katalog publik, produk milik petani, kategori | `categories`, `products` | `2-produk.php` | `Produk` |
+| **1** | Akun & Admin | Login, register, logout, lupa password, ubah password, hak akses per peran, profil, dashboard admin, kelola petani, lihat pesanan (admin), laporan penjualan admin | `users` | `1-akun-admin.php` | `AkunAdmin` |
+| **2** | Produk & Katalog | Katalog publik, produk milik petani (Form Request + preview foto jQuery), kategori | `categories`, `products` | `2-produk.php` | `Produk` |
 | **3** | Belanja (sisi pembeli) | Keranjang, checkout, pesanan pembeli, upload bukti, batal, konfirmasi diterima | `carts`, `orders`, `order_items` | `3-belanja.php` | `Belanja` |
-| **4** | Pesanan Masuk (sisi petani) | Pesanan masuk, konfirmasi pembayaran, resi pengiriman, dashboard petani | `payments` | `4-pesanan-masuk.php` | `PesananMasuk` |
+| **4** | Pesanan Masuk (sisi petani) | Pesanan masuk, konfirmasi pembayaran, resi pengiriman, dashboard petani, laporan penjualan petani | `payments` | `4-pesanan-masuk.php` | `PesananMasuk` |
 
 Urutan pengerjaan yang disarankan (karena foreign key): **1 → 2 → 3 → 4**. Anggota 3 butuh produk dari anggota 2, dan anggota 4 butuh pesanan dari anggota 3.
 
@@ -116,8 +157,9 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-4. Buat database kosong di MySQL, misalnya `agritani`, lalu ubah bagian database di `.env`
-   (secara bawaan `.env.example` memakai SQLite, jadi baris ini harus diganti):
+4. Buat database kosong di MySQL bernama `agritani` (HeidiSQL/phpMyAdmin, atau `mysql -u root -e "CREATE DATABASE agritani"`).
+   `.env.example` sudah memakai MySQL dengan pengaturan di bawah. Cocokkan dengan `.env` Anda
+   (nama database di `.env` harus sama dengan yang dibuat, kalau tidak muncul error `Unknown database`):
 
 ```env
 DB_CONNECTION=mysql
@@ -193,7 +235,7 @@ php artisan test                           # semua modul
 php artisan test tests/Feature/Belanja     # satu modul saja
 ```
 
-Folder test: `AkunAdmin`, `Produk`, `Belanja`, `PesananMasuk`, dan `Core` (komponen bersama).
+Folder test: `AkunAdmin`, `Produk`, `Belanja`, `PesananMasuk`, `Laporan` (laporan petani dan admin), dan `Core` (komponen bersama).
 
 ## Konfigurasi
 | Variabel `.env` | Fungsi | Bawaan |
@@ -236,6 +278,24 @@ git commit -m "Tambah filter harga di halaman katalog"
 git push -u origin fitur/nama-singkat
 ```
 Setelah itu buka GitHub dan buat **Pull Request** dari branch Anda ke `main`. Minta satu anggota lain untuk me-review sebelum di-merge.
+
+### Setelah ada perubahan besar di `main` (update kode)
+Lakukan ini setiap kali ketua mengabari ada pembaruan di `main`, dari folder proyek:
+
+```bash
+git status                 # pastikan tidak ada pekerjaan yang belum di-commit
+git checkout main
+git pull origin main
+composer install           # kalau ada paket baru
+php artisan migrate        # kalau ada migration baru
+php artisan optimize:clear # bersihkan cache view/config/route
+php artisan serve
+```
+
+- Kalau `git pull` menolak karena ada perubahan lokal: simpan dulu dengan `git stash`, jalankan `git pull origin main`, lalu `git stash pop`. Kalau perubahan itu memang tidak dibutuhkan, `git checkout .` membuangnya.
+- Kalau sedang di branch fitur sendiri: commit dulu, lalu `git merge origin/main` agar branch ikut terbaru.
+- Tidak perlu `npm install`. Proyek ini tidak memakai Node.js.
+- Error `Unknown database`: database di `.env` belum dibuat. Error `Vite manifest not found`: kode masih versi lama, ulangi langkah di atas.
 
 ### Wajib sebelum push
 1. **Jalankan semua test dan pastikan hijau:** `php artisan test`

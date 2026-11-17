@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Petani;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +35,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ProductRequest $request): RedirectResponse
     {
         $data = $this->validated($request);
         $data['slug'] = $this->uniqueSlug($data['name']);
@@ -59,7 +60,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(ProductRequest $request, Product $product): RedirectResponse
     {
         $this->authorizeOwner($product);
 
@@ -87,21 +88,11 @@ class ProductController extends Controller
         return back()->with('success', $product->is_active ? 'Produk diaktifkan.' : 'Produk dinonaktifkan.');
     }
 
-    private function validated(Request $request): array
+    /** Aturan validasi ada di App\Http\Requests\ProductRequest. */
+    private function validated(ProductRequest $request): array
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'description' => ['nullable', 'string', 'max:2000'],
-            'price' => ['required', 'numeric', 'min:100', 'max:99999999'],
-            'stock' => ['required', 'integer', 'min:0', 'max:1000000'],
-            'unit' => ['required', 'string', 'max:20'],
-            'weight' => ['required', 'integer', 'min:0', 'max:1000000'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-        ]);
-
+        $data = $request->safe()->except('image'); // foto ditangani terpisah
         $data['is_active'] = $request->boolean('is_active');
-        unset($data['image']); // ditangani terpisah
 
         return $data;
     }

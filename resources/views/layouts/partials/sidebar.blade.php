@@ -15,6 +15,7 @@
             ['section' => 'Transaksi'],
             ['Pengiriman', 'petani.shipments.index', '🚚'],
             ['Pembayaran', 'petani.payments.index', '💳'],
+            ['Laporan Penjualan', 'petani.reports.index', '📊'],
             ['section' => 'Lainnya'],
             ['Profil', 'profile.edit', '👤'],
         ],
@@ -23,6 +24,7 @@
             ['Daftar Petani', 'admin.farmers.index', '👥'],
             ['Kelola Kategori', 'admin.categories.index', '🏷️'],
             ['Daftar Pesanan', 'admin.orders.index', '📦'],
+            ['Laporan Penjualan', 'admin.reports.index', '📊'],
         ],
     ];
     $items = $menus[auth()->user()->role] ?? [];
