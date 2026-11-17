@@ -18,24 +18,25 @@ Urutan pengerjaan (karena foreign key): **1 → 2 → 3 → 4**.
 **Tabel:** `users`
 - **Model:** `User`
 - **Migration:** `create_users_table` (bawaan Laravel, sudah memuat kolom `role` dan `is_active`)
-- **Controller:** `Auth/AuthController`, `Auth/PasswordResetController` (lupa password), `ProfileController` (profil dan ubah password), `Admin/DashboardController`, `Admin/FarmerController`, `Admin/OrderController`
+- **Controller:** `Auth/AuthController`, `Auth/PasswordResetController` (lupa password), `ProfileController` (profil dan ubah password), `Admin/DashboardController`, `Admin/FarmerController`, `Admin/OrderController`, `Admin/ReportController` (laporan penjualan admin)
 - **Middleware:** `RoleMiddleware` (membatasi akses per peran)
-- **View:** `auth/*` (login, register, lupa dan reset password), `profile/edit`, `admin/dashboard`, `admin/farmers/*`, `admin/orders/*`
+- **View:** `auth/*` (login, register, lupa dan reset password), `profile/edit`, `admin/dashboard`, `admin/farmers/*`, `admin/orders/*`, `admin/reports/*`
 - **Seeder:** `UserSeeder`
-- **Test:** `AuthTest`, `LupaPasswordTest`, `ProfilTest`, `KelolaPetaniTest`, `PesananAdminTest`
-V
-**Yang dijelaskan saat presentasi:** registrasi (petani menunggu aktivasi admin), lupa dan ubah password, login dan pengalihan ke dashboard sesuai peran, bagaimana `RoleMiddleware` menolak akses lintas peran, dan kenapa petani yang dinonaktifkan produknya hilang dari katalog.
+- **Test:** `AuthTest`, `LupaPasswordTest`, `ProfilTest`, `KelolaPetaniTest`, `PesananAdminTest`, `LaporanPenjualanTest` (bersama anggota 4)
+
+**Yang dijelaskan saat presentasi:** registrasi (petani menunggu aktivasi admin), lupa dan ubah password, login dan pengalihan ke dashboard sesuai peran, bagaimana `RoleMiddleware` menolak akses lintas peran, kenapa petani yang dinonaktifkan produknya hilang dari katalog, dan laporan penjualan admin (filter periode, ringkasan, unduh CSV).
 
 ## Anggota 2 — Produk & Katalog
 **Tabel:** `categories`, `products`
 - **Model:** `Category`, `Product`
 - **Migration:** `create_categories_table`, `create_products_table`
 - **Controller:** `CatalogController`, `Petani/ProductController`, `Admin/CategoryController`
+- **Request:** `Requests/ProductRequest` (validasi produk, dipakai tambah dan ubah)
 - **View:** `catalog/*`, `petani/products/*`, `admin/categories/*`, komponen `product-card`
 - **Seeder:** `CategorySeeder`, `ProductSeeder`
 - **Test:** `ProdukPetaniTest`, `KategoriTest`
 
-**Yang dijelaskan saat presentasi:** CRUD produk dengan upload foto, slug otomatis dan unik, pencarian dan filter di katalog, petani hanya bisa mengubah produk miliknya, kategori yang sedang dipakai tidak bisa dihapus.
+**Yang dijelaskan saat presentasi:** CRUD produk dengan upload foto, slug otomatis dan unik, pencarian dan filter di katalog, petani hanya bisa mengubah produk miliknya, kategori yang sedang dipakai tidak bisa dihapus, alur Form Request (request → validasi → controller → redirect/pesan error), dan preview foto dengan jQuery.
 
 ## Anggota 3 — Belanja (sisi pembeli)
 **Tabel:** `carts`, `orders`, `order_items`
@@ -52,17 +53,18 @@ V
 **Tabel:** `payments` (plus kolom `courier`, `tracking_number`, `shipped_at` di `orders`)
 - **Model:** `Payment`
 - **Migration:** `create_payments_table`
-- **Controller:** `Petani/OrderController`, `Petani/PaymentController`, `Petani/ShipmentController`, `Petani/DashboardController`
-- **View:** `petani/orders/*`, `petani/payments/*`, `petani/shipments/*`, `petani/dashboard`, komponen `stat-card`
+- **Controller:** `Petani/OrderController`, `Petani/PaymentController`, `Petani/ShipmentController`, `Petani/DashboardController`, `Petani/ReportController` (laporan penjualan petani)
+- **Logika bersama:** `Concerns/BuildsSalesReport` (query laporan, ringkasan, ekspor CSV; dipakai juga laporan admin)
+- **View:** `petani/orders/*`, `petani/payments/*`, `petani/shipments/*`, `petani/dashboard`, `petani/reports/*`, `reports/_sales` (isi laporan bersama), komponen `stat-card`
 - **Seeder:** `DemoSeeder` (pesanan contoh untuk dashboard)
-- **Test:** `PesananPetaniTest`, `PembayaranTest`, `PengirimanTest`, `DashboardTest`
+- **Test:** `PesananPetaniTest`, `PembayaranTest`, `PengirimanTest`, `DashboardTest`, `LaporanPenjualanTest`
 
-**Yang dijelaskan saat presentasi:** petani hanya melihat pesanan produk miliknya, transfer harus dikonfirmasi sebelum pesanan diproses, perubahan status `pending → diproses → dikirim`, pengisian resi, dan statistik dashboard.
+**Yang dijelaskan saat presentasi:** petani hanya melihat pesanan produk miliknya, transfer harus dikonfirmasi sebelum pesanan diproses, perubahan status `pending → diproses → dikirim`, pengisian resi, statistik dashboard, dan laporan penjualan (filter, produk terlaris, CSV, cetak).
 
 ---
 
 ## File inti (ubah hanya setelah disepakati bersama)
-`routes/web.php`, `app/Http/Middleware/RoleMiddleware.php`, `resources/views/layouts/*` (termasuk `sidebar`), komponen `badge`, `resources/css/app.css`, `DatabaseSeeder`.
+`routes/web.php`, `app/Http/Middleware/RoleMiddleware.php`, `resources/views/layouts/*` (termasuk `sidebar`), komponen `badge`, `public/css/agritani.css`, `public/js/agritani.js` (jQuery), `DatabaseSeeder`.
 
 ## Titik singgung antar modul (koordinasi sebelum mengubah)
 | Yang dipakai | Milik | Dipakai oleh |

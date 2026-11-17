@@ -14,6 +14,6 @@
         </div>
     </div>
 
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    @include('layouts.partials.scripts')
 </body>
 </html>

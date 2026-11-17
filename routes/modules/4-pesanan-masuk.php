@@ -23,6 +23,8 @@ Route::middleware(['auth', 'role:petani'])->prefix('petani')->name('petani.')->g
     Route::patch('/pembayaran/{id}/konfirmasi', [Petani\PaymentController::class, 'confirm'])->name('payments.confirm');
     Route::patch('/pembayaran/{id}/tolak', [Petani\PaymentController::class, 'reject'])->name('payments.reject');
 
+    Route::get('/laporan', [Petani\ReportController::class, 'index'])->name('reports.index');
+
     Route::get('/pengiriman', [Petani\ShipmentController::class, 'index'])->name('shipments.index');
     Route::put('/pengiriman/{id}', [Petani\ShipmentController::class, 'update'])->name('shipments.update');
 });

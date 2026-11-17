@@ -64,7 +64,8 @@
                 @if ($product->image)
                     <img src="{{ asset('storage/'.$product->image) }}" alt="" class="d-block mb-2 rounded border" style="height: 6rem;">
                 @endif
-                <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" class="form-control">
+                <img id="image-preview" src="" alt="Pratinjau foto baru" class="d-none mb-2 rounded border" style="height: 6rem;">
+                <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" data-preview="#image-preview" class="form-control">
                 <div class="form-text">JPG/PNG/WebP, maksimal 2 MB.{{ $editing ? ' Kosongkan jika tidak ingin mengganti.' : '' }}</div>
                 @error('image')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
             </div>

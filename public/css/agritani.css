@@ -154,3 +154,10 @@
 
 /* Grafik batang di dashboard admin */
 .chart-bar { background: var(--agri-chart); border-radius: .25rem .25rem 0 0; width: 100%; flex: none; }
+
+/* Cetak laporan: sembunyikan menu, topbar, dan kontrol. */
+@media print {
+  .sidebar, .topbar, .no-print, .alert { display: none !important; }
+  body, .bg-surface { background: #fff !important; }
+  .card { border: 0 !important; box-shadow: none !important; }
+}

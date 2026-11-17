@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/petani', [Admin\FarmerController::class, 'index'])->name('farmers.index');
         Route::patch('/petani/{user}/toggle', [Admin\FarmerController::class, 'toggle'])->name('farmers.toggle');
 
+        Route::get('/laporan', [Admin\ReportController::class, 'index'])->name('reports.index');
+
         Route::get('/pesanan', [Admin\OrderController::class, 'index'])->name('orders.index');
         Route::get('/pesanan/{order}', [Admin\OrderController::class, 'show'])->name('orders.show');
     });
