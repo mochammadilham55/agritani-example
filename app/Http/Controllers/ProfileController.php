@@ -24,8 +24,21 @@ class ProfileController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:500'],
+            'bank_name' => [Rule::requiredIf($user->isPetani()), 'nullable', 'string', 'max:50'],
+            'bank_account_number' => [Rule::requiredIf($user->isPetani()), 'nullable', 'regex:/^[0-9]{6,30}$/'],
+            'bank_account_name' => [Rule::requiredIf($user->isPetani()), 'nullable', 'string', 'max:255'],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'bank_name.required' => 'Nama bank wajib diisi untuk petani.',
+            'bank_account_number.required' => 'Nomor rekening wajib diisi untuk petani.',
+            'bank_account_number.regex' => 'Nomor rekening harus berupa angka 6-30 digit.',
+            'bank_account_name.required' => 'Nama pemilik rekening wajib diisi untuk petani.',
         ]);
+
+        // Pembeli dan admin tidak menyimpan data rekening.
+        if (! $user->isPetani()) {
+            unset($data['bank_name'], $data['bank_account_number'], $data['bank_account_name']);
+        }
 
         unset($data['photo']);
 

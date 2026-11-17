@@ -35,6 +35,18 @@
                         @error('address')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
                     </div>
 
+                    @if ($user->isPetani())
+                        <h2 class="h6 fw-bold text-brand-dark mt-4 mb-1">Rekening Penerima Transfer</h2>
+                        <p class="small text-secondary">Ditampilkan ke pembeli saat checkout dengan metode transfer.</p>
+                        @foreach ([['bank_name', 'Nama bank (mis. BCA, BRI)'], ['bank_account_number', 'Nomor rekening'], ['bank_account_name', 'Atas nama']] as [$f, $label])
+                            <div class="mb-3">
+                                <label for="{{ $f }}" class="form-label small fw-medium">{{ $label }}</label>
+                                <input id="{{ $f }}" name="{{ $f }}" type="text" value="{{ old($f, $user->$f) }}" required @if ($f === 'bank_account_number') inputmode="numeric" @endif class="form-control">
+                                @error($f)<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                            </div>
+                        @endforeach
+                    @endif
+
                     <button class="btn btn-primary fw-semibold px-4">Simpan</button>
                 </div>
             </form>

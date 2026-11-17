@@ -54,8 +54,20 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:20'],
             'role' => ['required', Rule::in([User::ROLE_PEMBELI, User::ROLE_PETANI])],
+            'bank_name' => [Rule::requiredIf($request->input('role') === User::ROLE_PETANI), 'nullable', 'string', 'max:50'],
+            'bank_account_number' => [Rule::requiredIf($request->input('role') === User::ROLE_PETANI), 'nullable', 'regex:/^[0-9]{6,30}$/'],
+            'bank_account_name' => [Rule::requiredIf($request->input('role') === User::ROLE_PETANI), 'nullable', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'bank_name.required' => 'Nama bank wajib diisi untuk petani.',
+            'bank_account_number.required' => 'Nomor rekening wajib diisi untuk petani.',
+            'bank_account_number.regex' => 'Nomor rekening harus berupa angka 6-30 digit.',
+            'bank_account_name.required' => 'Nama pemilik rekening wajib diisi untuk petani.',
         ]);
+
+        if ($data['role'] !== User::ROLE_PETANI) {
+            unset($data['bank_name'], $data['bank_account_number'], $data['bank_account_name']);
+        }
 
         // Petani harus diverifikasi admin dulu; pembeli langsung aktif.
         $user = User::create($data + ['is_active' => $data['role'] === User::ROLE_PEMBELI]);

@@ -33,6 +33,17 @@
             </div>
         @endforeach
 
+        <div id="bank-fields" class="{{ old('role') === 'petani' ? '' : 'd-none' }}">
+            <p class="small fw-semibold text-brand-dark mb-2">Rekening penerima transfer</p>
+            @foreach ([['bank_name', 'Nama bank (mis. BCA, BRI)'], ['bank_account_number', 'Nomor rekening'], ['bank_account_name', 'Atas nama']] as [$field, $label])
+                <div class="mb-3">
+                    <label for="{{ $field }}" class="form-label small fw-medium">{{ $label }}</label>
+                    <input id="{{ $field }}" name="{{ $field }}" type="text" value="{{ old($field) }}" @if ($field === 'bank_account_number') inputmode="numeric" @endif class="form-control">
+                    @error($field)<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                </div>
+            @endforeach
+        </div>
+
         <div class="mb-3">
             <label for="password" class="form-label small fw-medium">Password</label>
             <x-password-input id="password" name="password" required minlength="8" />

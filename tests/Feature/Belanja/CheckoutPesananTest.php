@@ -164,4 +164,22 @@ class CheckoutPesananTest extends TestCase
         $this->actingAs($this->buyer)->get('/pembeli/dashboard')
             ->assertOk()->assertSee('Pesanan Saya');
     }
+
+    public function test_checkout_shows_farmer_bank_account(): void
+    {
+        $farmer = $this->user('petani', 'f@t.test');
+        $farmer->update(['bank_name' => 'BCA', 'bank_account_number' => '7770001112', 'bank_account_name' => 'Pak Slamet']);
+        $other = $this->user('petani', 'g@t.test');
+        $p1 = $this->product($farmer, 'Bayam', 5000, 10);
+        $p2 = $this->product($other, 'Kangkung', 4000, 10);
+        Cart::create(['user_id' => $this->buyer->id, 'product_id' => $p1->id, 'quantity' => 1]);
+        Cart::create(['user_id' => $this->buyer->id, 'product_id' => $p2->id, 'quantity' => 1]);
+
+        $this->actingAs($this->buyer)->get(route('pembeli.checkout.create'))
+            ->assertOk()
+            ->assertSee('BCA')
+            ->assertSee('7770001112')
+            ->assertSee('a.n. Pak Slamet')
+            ->assertSee('Petani belum mengisi rekening');
+    }
 }

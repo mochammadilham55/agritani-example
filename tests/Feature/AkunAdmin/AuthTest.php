@@ -94,10 +94,31 @@ class AuthTest extends TestCase
     {
         $this->post('/register', [
             'name' => 'Tani', 'email' => 't@t.test', 'role' => 'petani',
+            'bank_name' => 'BCA', 'bank_account_number' => '1234567890', 'bank_account_name' => 'Tani',
             'password' => 'password123', 'password_confirmation' => 'password123',
         ])->assertRedirect('/login');
         $this->assertGuest();
-        $this->assertFalse(User::where('email', 't@t.test')->first()->is_active);
+        $u = User::where('email', 't@t.test')->first();
+        $this->assertFalse($u->is_active);
+        $this->assertSame('1234567890', $u->bank_account_number);
+    }
+
+    public function test_register_petani_requires_bank_account(): void
+    {
+        $this->post('/register', [
+            'name' => 'Tani', 'email' => 't@t.test', 'role' => 'petani',
+            'password' => 'password123', 'password_confirmation' => 'password123',
+        ])->assertSessionHasErrors(['bank_name', 'bank_account_number', 'bank_account_name']);
+    }
+
+    public function test_register_pembeli_does_not_need_bank_account(): void
+    {
+        $this->post('/register', [
+            'name' => 'Budi', 'email' => 'b@t.test', 'role' => 'pembeli',
+            'bank_account_number' => '999999',
+            'password' => 'password123', 'password_confirmation' => 'password123',
+        ])->assertRedirect('/dashboard');
+        $this->assertNull(User::where('email', 'b@t.test')->first()->bank_account_number);
     }
 
     public function test_cannot_register_as_admin(): void

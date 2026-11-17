@@ -36,6 +36,22 @@
                         @endforeach
                     </div>
                     @error('method')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+
+                    <div id="transfer-info" class="mt-3">
+                        <p class="small fw-semibold mb-2">Transfer ke rekening petani berikut:</p>
+                        @foreach ($groups as $lines)
+                            @php($farmer = $lines->first()->product->farmer)
+                            <div class="border rounded p-3 mb-2 small">
+                                <span class="d-block fw-semibold">{{ $farmer?->name }}</span>
+                                @if ($farmer?->hasBankAccount())
+                                    <span class="d-block">{{ $farmer->bank_name }} · <span class="fw-bold">{{ $farmer->bank_account_number }}</span></span>
+                                    <span class="d-block text-secondary">a.n. {{ $farmer->bank_account_name }}</span>
+                                @else
+                                    <span class="d-block text-secondary">Petani belum mengisi rekening. Pilih COD atau hubungi petani.</span>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </section>
 

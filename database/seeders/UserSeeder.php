@@ -23,6 +23,9 @@ class UserSeeder extends Seeder
                 'role' => $role,
                 'phone' => $phone,
                 'address' => 'Jl. Contoh No. 1, Indonesia',
+                'bank_name' => $role === 'petani' ? 'BCA' : null,
+                'bank_account_number' => $role === 'petani' ? '1234567890' : null,
+                'bank_account_name' => $role === 'petani' ? $name : null,
                 'is_active' => true,
             ]);
         }

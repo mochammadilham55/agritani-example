@@ -89,4 +89,38 @@ class ProfilTest extends TestCase
             $this->actingAs($this->user($role, "$role@x.test"))->get('/profil')->assertOk();
         }
     }
+
+    public function test_petani_must_fill_bank_account_in_profile(): void
+    {
+        $farmer = $this->user('petani', 'p@t.test');
+        $base = ['name' => 'Petani', 'email' => 'p@t.test'];
+
+        $this->actingAs($farmer)->put('/profil', $base)
+            ->assertSessionHasErrors(['bank_name', 'bank_account_number', 'bank_account_name']);
+
+        $this->actingAs($farmer)->put('/profil', $base + [
+            'bank_name' => 'BRI', 'bank_account_number' => '0011223344', 'bank_account_name' => 'Pak Tani',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame('0011223344', $farmer->fresh()->bank_account_number);
+    }
+
+    public function test_bank_account_must_be_digits(): void
+    {
+        $farmer = $this->user('petani', 'p@t.test');
+
+        $this->actingAs($farmer)->put('/profil', [
+            'name' => 'Petani', 'email' => 'p@t.test',
+            'bank_name' => 'BRI', 'bank_account_number' => 'abc-123', 'bank_account_name' => 'Pak Tani',
+        ])->assertSessionHasErrors('bank_account_number');
+    }
+
+    public function test_buyer_cannot_store_bank_account(): void
+    {
+        $this->actingAs($this->buyer)->put('/profil', [
+            'name' => 'Budi', 'email' => 'b@t.test', 'bank_account_number' => '123456',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertNull($this->buyer->fresh()->bank_account_number);
+    }
 }

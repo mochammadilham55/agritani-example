@@ -51,3 +51,23 @@ $(function () {
         window.print();
     });
 });
+
+// Tampilkan isian rekening hanya saat mendaftar sebagai petani.
+$(function () {
+    var $bank = $('#bank-fields');
+    if (!$bank.length) return;
+    $('input[name=role]').on('change', function () {
+        $bank.toggleClass('d-none', $('input[name=role]:checked').val() !== 'petani');
+    });
+});
+
+// Tampilkan info rekening hanya saat metode transfer dipilih di checkout.
+$(function () {
+    var $info = $('#transfer-info');
+    if (!$info.length) return;
+    function sync() {
+        $info.toggleClass('d-none', $('input[name=method]:checked').val() !== 'transfer');
+    }
+    $('input[name=method]').on('change', sync);
+    sync();
+});

@@ -84,6 +84,15 @@
                             </a>
                         @endif
 
+                        @php($farmer = $order->items->first()?->product?->farmer)
+                        @if ($payment->method === 'transfer' && $farmer?->hasBankAccount())
+                            <div class="border rounded p-2 mt-3">
+                                <span class="d-block text-secondary">Transfer ke:</span>
+                                <span class="d-block fw-semibold">{{ $farmer->bank_name }} · {{ $farmer->bank_account_number }}</span>
+                                <span class="d-block text-secondary">a.n. {{ $farmer->bank_account_name }}</span>
+                            </div>
+                        @endif
+
                         @if ($payment->status === 'ditolak')
                             <p class="small mt-2 mb-0" style="color: #8E1F14;">Bukti pembayaran ditolak. Silakan unggah ulang.</p>
                         @endif
