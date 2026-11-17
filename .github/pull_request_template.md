@@ -15,7 +15,7 @@
 ## Checklist pembuat (wajib sebelum minta review)
 - [ ] `php artisan test` hijau
 - [ ] Hanya file modul saya yang berubah
-- [ ] Tidak ada `.env`, `vendor/`, `node_modules/`, atau file unggahan
+- [ ] Tidak ada `.env`, `vendor/`, atau file unggahan
 - [ ] Tidak ada password, token, atau kunci API di kode
 - [ ] Migration baru dibuat sebagai file baru, bukan mengedit yang lama
 - [ ] Fitur baru punya test

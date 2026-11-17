@@ -96,8 +96,11 @@ Urutan pengerjaan yang disarankan (karena foreign key): **1 → 2 → 3 → 4**.
 
 ## Kebutuhan
 - PHP 8.3+ dan Composer
-- Node.js 20+ dan npm
 - MySQL (disarankan Laragon di Windows)
+
+Tidak perlu Node.js/npm. Tampilan memakai Bootstrap 5 yang sudah disertakan di `public/vendor/bootstrap/`, jadi tidak ada langkah build dan berjalan offline.
+
+> **Peringatan Node.js:** proyek ini **tidak memakai Node.js**. Jangan menjalankan `npm install`, `npm run dev`, atau `npm run build` karena `package.json` sudah dihapus. Versi Node apa pun (termasuk 18) tidak berpengaruh. Jika muncul error `Vite manifest not found`, berarti kode Anda masih versi lama: jalankan `git pull`, lalu `php artisan view:clear`.
 
 ## Setup
 ```bash
@@ -107,7 +110,6 @@ cd agritani-example
 
 # 2. Pasang dependensi
 composer install
-npm install
 
 # 3. Siapkan environment
 cp .env.example .env
@@ -133,11 +135,10 @@ php artisan migrate --seed
 php artisan storage:link
 ```
 
-6. Jalankan aplikasi (dua terminal):
+6. Jalankan aplikasi:
 
 ```bash
 php artisan serve
-npm run dev
 ```
 
 Buka http://127.0.0.1:8000.
@@ -153,7 +154,7 @@ Semua akun memakai password `password`.
 |---|---|
 | Admin | admin@agritani.test |
 | Petani | petani@agritani.test |
-| Petani 2 | petani2@aVgritani.test |
+| Petani 2 | petani2@agritani.test |
 | Pembeli | pembeli@agritani.test |
 
 Hanya untuk pengembangan lokal. Ganti atau hapus akun ini sebelum aplikasi dipasang di server sungguhan.
@@ -238,7 +239,7 @@ Setelah itu buka GitHub dan buat **Pull Request** dari branch Anda ke `main`. Mi
 
 ### Wajib sebelum push
 1. **Jalankan semua test dan pastikan hijau:** `php artisan test`
-2. **Periksa file yang akan dikirim:** `git status`. Pastikan tidak ada `.env`, `vendor/`, `node_modules/`, atau file foto/unggahan.
+2. **Periksa file yang akan dikirim:** `git status`. Pastikan tidak ada `.env`, `vendor/`, atau file foto/unggahan.
 3. **Pastikan hanya file modul Anda yang berubah.** Kalau perlu mengubah file modul orang lain, beri tahu pemiliknya (lihat [PEMBAGIAN_TUGAS.md](PEMBAGIAN_TUGAS.md)).
 4. **Ambil perubahan terbaru dulu:** `git pull origin main`, selesaikan bentrokan jika ada, lalu jalankan test lagi.
 5. **Cek pesan commit** supaya jelas dan singkat, dalam Bahasa Indonesia, dengan kata kerja di depan ("Tambah ...", "Perbaiki ...", "Hapus ...").

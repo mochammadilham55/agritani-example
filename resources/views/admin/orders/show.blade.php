@@ -6,50 +6,58 @@
 @section('content')
     @php $payment = $order->payment; @endphp
 
-    <a href="{{ route('admin.orders.index') }}" class="text-sm text-gray-500 hover:underline">← Daftar pesanan</a>
+    <a href="{{ route('admin.orders.index') }}" class="small text-secondary">← Daftar pesanan</a>
 
-    <div class="mt-4 grid gap-6 lg:grid-cols-3">
-        <section class="rounded-xl border border-line bg-white lg:col-span-2">
-            <div class="flex items-center justify-between border-b border-line px-5 py-3">
-                <h2 class="font-bold text-brand-dark">Produk</h2><x-badge :status="$order->status" />
-            </div>
-            <ul class="divide-y divide-line text-sm">
-                @foreach ($order->items as $item)
-                    <li class="flex justify-between gap-4 px-5 py-3">
-                        <span>{{ $item->product->name }}
-                            <span class="block text-xs text-gray-500">{{ $item->quantity }} {{ $item->product->unit }} × Rp {{ number_format($item->price, 0, ',', '.') }} · {{ $item->product->farmer?->name }}</span></span>
-                        <span class="font-semibold">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
-                    </li>
-                @endforeach
-            </ul>
-            <dl class="space-y-1 border-t border-line px-5 py-3 text-sm">
-                <div class="flex justify-between"><dt class="text-gray-500">Subtotal</dt><dd>Rp {{ number_format($order->total_price, 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500">Ongkir</dt><dd>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between text-base font-extrabold text-brand-dark"><dt>Total</dt><dd>Rp {{ number_format($order->grandTotal(), 0, ',', '.') }}</dd></div>
-            </dl>
-        </section>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+            <section class="card">
+                <div class="card-header d-flex align-items-center justify-content-between py-3">
+                    <h2 class="h6 fw-bold text-brand-dark mb-0">Produk</h2><x-badge :status="$order->status" />
+                </div>
+                <ul class="list-group list-group-flush small">
+                    @foreach ($order->items as $item)
+                        <li class="list-group-item d-flex justify-content-between gap-3 px-3 py-3">
+                            <span>{{ $item->product->name }}
+                                <span class="d-block small text-secondary">{{ $item->quantity }} {{ $item->product->unit }} × Rp {{ number_format($item->price, 0, ',', '.') }} · {{ $item->product->farmer?->name }}</span></span>
+                            <span class="fw-semibold">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+                <dl class="small border-top px-3 py-3 mb-0">
+                    <div class="d-flex justify-content-between"><dt class="fw-normal text-secondary">Subtotal</dt><dd class="mb-1">Rp {{ number_format($order->total_price, 0, ',', '.') }}</dd></div>
+                    <div class="d-flex justify-content-between"><dt class="fw-normal text-secondary">Ongkir</dt><dd class="mb-1">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</dd></div>
+                    <div class="d-flex justify-content-between fs-6 fw-bold text-brand-dark"><dt>Total</dt><dd class="mb-0">Rp {{ number_format($order->grandTotal(), 0, ',', '.') }}</dd></div>
+                </dl>
+            </section>
+        </div>
 
-        <aside class="space-y-4 text-sm">
-            <section class="rounded-xl border border-line bg-white p-5">
-                <h2 class="mb-2 font-bold text-brand-dark">Pembeli</h2>
-                <p class="font-medium">{{ $order->buyer->name }}</p>
-                <p class="text-gray-500">{{ $order->buyer->email }} · {{ $order->buyer->phone ?? '-' }}</p>
-                <p class="mt-2 text-gray-600">{{ $order->shipping_address }}</p>
+        <aside class="col-lg-4 d-grid gap-3 align-content-start small">
+            <section class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark">Pembeli</h2>
+                    <p class="fw-medium mb-0">{{ $order->buyer->name }}</p>
+                    <p class="text-secondary mb-0">{{ $order->buyer->email }} · {{ $order->buyer->phone ?? '-' }}</p>
+                    <p class="text-secondary mt-2 mb-0">{{ $order->shipping_address }}</p>
+                </div>
             </section>
-            <section class="rounded-xl border border-line bg-white p-5">
-                <h2 class="mb-2 font-bold text-brand-dark">Pembayaran</h2>
-                <p>{{ $payment?->method === 'cod' ? 'COD' : 'Transfer Bank' }} · <x-badge :status="$payment?->status ?? 'menunggu'" /></p>
-                @if ($payment?->proof_image)
-                    <a href="{{ asset('storage/'.$payment->proof_image) }}" target="_blank" rel="noopener" class="mt-2 inline-block text-brand hover:underline">Lihat bukti</a>
-                @endif
+            <section class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark">Pembayaran</h2>
+                    <p class="mb-0">{{ $payment?->method === 'cod' ? 'COD' : 'Transfer Bank' }} · <x-badge :status="$payment?->status ?? 'menunggu'" /></p>
+                    @if ($payment?->proof_image)
+                        <a href="{{ asset('storage/'.$payment->proof_image) }}" target="_blank" rel="noopener" class="d-inline-block mt-2">Lihat bukti</a>
+                    @endif
+                </div>
             </section>
-            <section class="rounded-xl border border-line bg-white p-5">
-                <h2 class="mb-2 font-bold text-brand-dark">Pengiriman</h2>
-                @if ($order->tracking_number)
-                    <p>{{ $order->courier }} · <span class="font-mono">{{ $order->tracking_number }}</span></p>
-                @else
-                    <p class="text-gray-400">Belum dikirim.</p>
-                @endif
+            <section class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark">Pengiriman</h2>
+                    @if ($order->tracking_number)
+                        <p class="mb-0">{{ $order->courier }} · <span class="font-monospace">{{ $order->tracking_number }}</span></p>
+                    @else
+                        <p class="text-secondary mb-0">Belum dikirim.</p>
+                    @endif
+                </div>
             </section>
         </aside>
     </div>

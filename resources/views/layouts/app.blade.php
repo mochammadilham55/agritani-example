@@ -1,51 +1,46 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('layouts.partials.head')
     <title>@yield('title', 'Dashboard') — AgriTani</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-surface font-sans text-gray-800 antialiased">
-    <input type="checkbox" id="sidebar-toggle" class="peer sr-only">
-
-    {{-- Sidebar --}}
-    <aside class="fixed inset-y-0 left-0 z-30 w-64 -translate-x-full overflow-y-auto bg-brand-dark transition-transform peer-checked:translate-x-0 md:translate-x-0">
-        <a href="{{ route('home') }}" class="block px-7 pb-2 pt-6 text-xl font-extrabold text-white">🌱 AgriTani</a>
-        @include('layouts.partials.sidebar')
-    </aside>
-    <label for="sidebar-toggle" class="fixed inset-0 z-20 hidden bg-black/40 peer-checked:block md:!hidden"></label>
-
-    <div class="md:pl-64">
-        {{-- Topbar --}}
-        <header class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-line bg-white px-4 md:px-8">
-            <div class="flex items-center gap-3">
-                <label for="sidebar-toggle" class="cursor-pointer rounded-lg border border-line px-2.5 py-1.5 md:hidden" aria-label="Buka menu">☰</label>
-                <h1 class="text-lg font-bold text-brand-dark">@yield('heading', 'Dashboard')</h1>
+<body>
+    <div class="d-md-flex min-vh-100">
+        {{-- Sidebar: laci geser di layar kecil, tetap tampil di layar >= md --}}
+        <aside class="sidebar offcanvas-md offcanvas-start" tabindex="-1" id="sidebar" aria-label="Menu utama">
+            <div class="sidebar-panel bg-brand-dark h-100 w-100">
+                <div class="d-flex align-items-center justify-content-between px-4 pt-4 pb-2">
+                    <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">🌱 AgriTani</a>
+                    <button type="button" class="btn-close btn-close-white d-md-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Tutup menu"></button>
+                </div>
+                @include('layouts.partials.sidebar')
             </div>
-            <div class="flex items-center gap-3">
-                <span class="hidden text-sm font-medium sm:inline">{{ auth()->user()->name }}</span>
-                <span class="rounded-full bg-role-bg px-2.5 py-0.5 text-xs font-semibold capitalize text-brand-dark">{{ auth()->user()->role }}</span>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="rounded-lg border border-line px-3 py-1.5 text-sm hover:bg-surface">Keluar</button>
-                </form>
-            </div>
-        </header>
+        </aside>
 
-        <main class="p-4 md:p-8">
-            @if (session('success'))
-                <div class="mb-4 rounded-lg bg-[#DDF0DA] px-4 py-3 text-sm text-[#1F5A22]">{{ session('success') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="mb-4 rounded-lg bg-[#FBE1DE] px-4 py-3 text-sm text-[#8E1F14]">{{ session('error') }}</div>
-            @endif
+        <div class="flex-grow-1 min-w-0">
+            {{-- Topbar --}}
+            <header class="topbar sticky-top d-flex align-items-center justify-content-between bg-white border-bottom px-3 px-md-4">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-md-none" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Buka menu">☰</button>
+                    <h1 class="h5 fw-bold text-brand-dark mb-0">@yield('heading', 'Dashboard')</h1>
+                </div>
+                <div class="d-flex align-items-center gap-2 gap-md-3">
+                    <span class="d-none d-sm-inline small fw-medium">{{ auth()->user()->name }}</span>
+                    <span class="badge rounded-pill bg-role-bg text-brand-dark text-capitalize">{{ auth()->user()->role }}</span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="btn btn-outline-secondary btn-sm">Keluar</button>
+                    </form>
+                </div>
+            </header>
 
-            @yield('content')
-        </main>
+            <main class="p-3 p-md-4">
+                @include('layouts.partials.alerts')
+                @yield('content')
+            </main>
+        </div>
     </div>
+
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

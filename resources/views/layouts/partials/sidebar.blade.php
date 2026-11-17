@@ -28,10 +28,10 @@
     $items = $menus[auth()->user()->role] ?? [];
 @endphp
 
-<nav class="space-y-1 p-4 text-sm">
+<nav class="nav flex-column px-3 pb-4 small">
     @foreach ($items as $item)
         @if (isset($item['section']))
-            <p class="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-white/50">{{ $item['section'] }}</p>
+            <p class="sidebar-section mb-0">{{ $item['section'] }}</p>
         @else
             @php
                 [$label, $route, $icon] = $item;
@@ -42,16 +42,11 @@
                     : request()->routeIs($route, \Illuminate\Support\Str::beforeLast($route, '.').'.*'));
             @endphp
             @if ($exists)
-                <a href="{{ route($route) }}"
-                   @class([
-                       'flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition',
-                       'bg-white/15 text-white' => $active,
-                       'text-white/80 hover:bg-white/10 hover:text-white' => ! $active,
-                   ])>
+                <a href="{{ route($route) }}" @class(['nav-link d-flex align-items-center gap-3', 'active' => $active])>
                     <span aria-hidden="true">{{ $icon }}</span>{{ $label }}
                 </a>
             @else
-                <span class="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-white/35" title="Segera hadir">
+                <span class="nav-link disabled d-flex align-items-center gap-3" title="Segera hadir">
                     <span aria-hidden="true">{{ $icon }}</span>{{ $label }}
                 </span>
             @endif

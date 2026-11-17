@@ -3,70 +3,81 @@
 @section('title', 'Checkout — AgriTani')
 
 @section('content')
-    <h1 class="mb-6 text-2xl font-extrabold text-brand-dark">Checkout</h1>
+    <h1 class="fs-2 fw-bold text-brand-dark mb-4">Checkout</h1>
 
-    <form method="POST" action="{{ route('pembeli.checkout.store') }}" class="grid gap-6 lg:grid-cols-3">
+    <form method="POST" action="{{ route('pembeli.checkout.store') }}" class="row g-4">
         @csrf
 
-        <div class="space-y-6 lg:col-span-2">
-            <section class="rounded-xl border border-line bg-white p-5">
-                <h2 class="mb-3 font-bold text-brand-dark">Alamat Pengiriman</h2>
-                <textarea name="shipping_address" rows="3" required placeholder="Nama jalan, nomor, kelurahan, kota, kode pos"
-                          class="w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">{{ old('shipping_address', auth()->user()->address) }}</textarea>
-                @error('shipping_address')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
-                <textarea name="notes" rows="2" placeholder="Catatan untuk petani (opsional)"
-                          class="mt-3 w-full rounded-lg border border-line px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20">{{ old('notes') }}</textarea>
-            </section>
-
-            <section class="rounded-xl border border-line bg-white p-5">
-                <h2 class="mb-3 font-bold text-brand-dark">Metode Pembayaran</h2>
-                <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach (['transfer' => ['Transfer Bank', 'Upload bukti transfer setelah pesan.'], 'cod' => ['Bayar di Tempat (COD)', 'Bayar tunai saat pesanan tiba.']] as $value => [$label, $hint])
-                        <label class="cursor-pointer">
-                            <input type="radio" name="method" value="{{ $value }}" class="peer sr-only" @checked(old('method', 'transfer') === $value)>
-                            <span class="block rounded-lg border border-line p-3 peer-checked:border-brand peer-checked:bg-role-bg">
-                                <span class="block text-sm font-semibold">{{ $label }}</span>
-                                <span class="block text-xs text-gray-500">{{ $hint }}</span>
-                            </span>
-                        </label>
-                    @endforeach
+        <div class="col-lg-8 d-grid gap-4 align-content-start">
+            <section class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark mb-3">Alamat Pengiriman</h2>
+                    <textarea name="shipping_address" rows="3" required placeholder="Nama jalan, nomor, kelurahan, kota, kode pos"
+                              class="form-control">{{ old('shipping_address', auth()->user()->address) }}</textarea>
+                    @error('shipping_address')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                    <textarea name="notes" rows="2" placeholder="Catatan untuk petani (opsional)" class="form-control mt-3">{{ old('notes') }}</textarea>
                 </div>
-                @error('method')<p class="mt-1 text-xs text-[#8E1F14]">{{ $message }}</p>@enderror
             </section>
 
-            <section class="rounded-xl border border-line bg-white p-5">
-                <h2 class="mb-3 font-bold text-brand-dark">Rincian Pesanan</h2>
-                @foreach ($groups as $lines)
-                    <div class="mb-4 last:mb-0">
-                        <p class="text-sm font-semibold">Dari {{ $lines->first()->product->farmer?->name }}
-                            <span class="font-normal text-gray-400">· ongkir Rp {{ number_format($shipping, 0, ',', '.') }}</span></p>
-                        <ul class="mt-1 divide-y divide-line text-sm">
-                            @foreach ($lines as $l)
-                                <li class="flex justify-between py-1.5">
-                                    <span>{{ $l->product->name }} × {{ $l->quantity }} {{ $l->product->unit }}</span>
-                                    <span>Rp {{ number_format($l->product->price * $l->quantity, 0, ',', '.') }}</span>
-                                </li>
-                            @endforeach
-                        </ul>
+            <section class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark mb-3">Metode Pembayaran</h2>
+                    <div class="row g-3">
+                        @foreach (['transfer' => ['Transfer Bank', 'Upload bukti transfer setelah pesan.'], 'cod' => ['Bayar di Tempat (COD)', 'Bayar tunai saat pesanan tiba.']] as $value => [$label, $hint])
+                            <div class="col-sm-6">
+                                <label class="d-block h-100">
+                                    <input type="radio" name="method" value="{{ $value }}" class="choice-input visually-hidden" @checked(old('method', 'transfer') === $value)>
+                                    <span class="choice-box p-3 h-100">
+                                        <span class="d-block small fw-semibold">{{ $label }}</span>
+                                        <span class="d-block small text-secondary">{{ $hint }}</span>
+                                    </span>
+                                </label>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
-                @if ($groups->count() > 1)
-                    <p class="mt-3 rounded-lg bg-[#FCEFD6] px-3 py-2 text-xs text-[#7A4B00]">
-                        Produk dari {{ $groups->count() }} petani berbeda akan dipecah menjadi {{ $groups->count() }} pesanan.
-                    </p>
-                @endif
+                    @error('method')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark mb-3">Rincian Pesanan</h2>
+                    @foreach ($groups as $lines)
+                        <div class="mb-3">
+                            <p class="small fw-semibold mb-1">Dari {{ $lines->first()->product->farmer?->name }}
+                                <span class="fw-normal text-secondary">· ongkir Rp {{ number_format($shipping, 0, ',', '.') }}</span></p>
+                            <ul class="list-group list-group-flush small">
+                                @foreach ($lines as $l)
+                                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                                        <span>{{ $l->product->name }} × {{ $l->quantity }} {{ $l->product->unit }}</span>
+                                        <span>Rp {{ number_format($l->product->price * $l->quantity, 0, ',', '.') }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endforeach
+                    @if ($groups->count() > 1)
+                        <div class="alert alert-warning py-2 small mb-0">
+                            Produk dari {{ $groups->count() }} petani berbeda akan dipecah menjadi {{ $groups->count() }} pesanan.
+                        </div>
+                    @endif
+                </div>
             </section>
         </div>
 
-        <aside class="h-fit rounded-xl border border-line bg-white p-5">
-            <h2 class="font-bold text-brand-dark">Total</h2>
-            <dl class="mt-3 space-y-1 text-sm">
-                <div class="flex justify-between"><dt class="text-gray-500">Subtotal</dt><dd>Rp {{ number_format($subtotal, 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between"><dt class="text-gray-500">Ongkir ({{ $groups->count() }}×)</dt><dd>Rp {{ number_format($shipping * $groups->count(), 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between border-t border-line pt-2 text-base font-extrabold text-brand-dark"><dt>Total</dt><dd>Rp {{ number_format($grand, 0, ',', '.') }}</dd></div>
-            </dl>
-            <button class="mt-4 w-full rounded-lg bg-brand py-2.5 text-sm font-semibold text-white hover:bg-brand-dark">Buat Pesanan</button>
-            <a href="{{ route('pembeli.cart.index') }}" class="mt-2 block text-center text-sm text-gray-500 hover:underline">Kembali ke keranjang</a>
-        </aside>
+        <div class="col-lg-4">
+            <aside class="card">
+                <div class="card-body">
+                    <h2 class="h6 fw-bold text-brand-dark">Total</h2>
+                    <dl class="small mt-3 mb-3">
+                        <div class="d-flex justify-content-between"><dt class="fw-normal text-secondary">Subtotal</dt><dd class="mb-1">Rp {{ number_format($subtotal, 0, ',', '.') }}</dd></div>
+                        <div class="d-flex justify-content-between"><dt class="fw-normal text-secondary">Ongkir ({{ $groups->count() }}×)</dt><dd class="mb-1">Rp {{ number_format($shipping * $groups->count(), 0, ',', '.') }}</dd></div>
+                        <div class="d-flex justify-content-between border-top pt-2 fs-6 fw-bold text-brand-dark"><dt>Total</dt><dd class="mb-0">Rp {{ number_format($grand, 0, ',', '.') }}</dd></div>
+                    </dl>
+                    <button class="btn btn-primary w-100 fw-semibold">Buat Pesanan</button>
+                    <a href="{{ route('pembeli.cart.index') }}" class="d-block text-center small text-secondary mt-2">Kembali ke keranjang</a>
+                </div>
+            </aside>
+        </div>
     </form>
 @endsection

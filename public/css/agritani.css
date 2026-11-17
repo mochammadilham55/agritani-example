@@ -1,0 +1,156 @@
+/*
+ * Tema AgriTani di atas Bootstrap 5.3.
+ * File statis: tidak perlu Node, npm, atau proses build. Cukup refresh browser setelah mengubahnya.
+ */
+
+:root {
+    --agri-brand: #2F7D32;
+    --agri-brand-dark: #1F5A22;
+    --agri-chart: #4F9A3A;
+    --agri-surface: #F5F7F2;
+    --agri-line: #E3E8DF;
+    --agri-role-bg: #E4EFE1;
+
+    /* Arahkan warna bawaan Bootstrap ke palet AgriTani. */
+    --bs-primary: #2F7D32;
+    --bs-primary-rgb: 47, 125, 50;
+    --bs-link-color: #2F7D32;
+    --bs-link-color-rgb: 47, 125, 50;
+    --bs-link-hover-color: #1F5A22;
+    --bs-link-hover-color-rgb: 31, 90, 34;
+    --bs-body-bg: #F5F7F2;
+    --bs-body-color: #1F2937;
+    --bs-border-color: #E3E8DF;
+    --bs-body-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Warna tema (pengganti kelas Tailwind brand/surface/role-bg). */
+.bg-brand { background-color: var(--agri-brand) !important; }
+.bg-brand-dark { background-color: var(--agri-brand-dark) !important; }
+.bg-surface { background-color: var(--agri-surface) !important; }
+.bg-role-bg { background-color: var(--agri-role-bg) !important; }
+.bg-chart { background-color: var(--agri-chart) !important; }
+.text-brand { color: var(--agri-brand) !important; }
+.text-brand-dark { color: var(--agri-brand-dark) !important; }
+.min-w-0 { min-width: 0; }
+
+/* Tombol utama */
+.btn-primary {
+    --bs-btn-bg: #2F7D32;
+    --bs-btn-border-color: #2F7D32;
+    --bs-btn-hover-bg: #1F5A22;
+    --bs-btn-hover-border-color: #1F5A22;
+    --bs-btn-active-bg: #1F5A22;
+    --bs-btn-active-border-color: #1F5A22;
+    --bs-btn-disabled-bg: #2F7D32;
+    --bs-btn-disabled-border-color: #2F7D32;
+    --bs-btn-focus-shadow-rgb: 47, 125, 50;
+}
+.btn-outline-primary {
+    --bs-btn-color: #2F7D32;
+    --bs-btn-border-color: #2F7D32;
+    --bs-btn-hover-bg: #2F7D32;
+    --bs-btn-hover-border-color: #2F7D32;
+    --bs-btn-active-bg: #1F5A22;
+    --bs-btn-active-border-color: #1F5A22;
+    --bs-btn-focus-shadow-rgb: 47, 125, 50;
+}
+
+/* Form dan komponen yang warnanya tertanam di Bootstrap. */
+.form-control:focus,
+.form-select:focus {
+    border-color: #2F7D32;
+    box-shadow: 0 0 0 .2rem rgba(47, 125, 50, .2);
+}
+.form-check-input:checked {
+    background-color: #2F7D32;
+    border-color: #2F7D32;
+}
+.form-check-input:focus {
+    border-color: #2F7D32;
+    box-shadow: 0 0 0 .2rem rgba(47, 125, 50, .2);
+}
+.pagination {
+    --bs-pagination-color: #2F7D32;
+    --bs-pagination-hover-color: #1F5A22;
+    --bs-pagination-active-bg: #2F7D32;
+    --bs-pagination-active-border-color: #2F7D32;
+    --bs-pagination-focus-color: #1F5A22;
+    --bs-pagination-focus-box-shadow: 0 0 0 .2rem rgba(47, 125, 50, .2);
+}
+
+/* Kartu dan tabel */
+.card { --bs-card-border-color: var(--agri-line); --bs-card-cap-bg: #fff; }
+.table > :not(caption) > * > * { padding: .75rem 1rem; }
+.table thead th {
+    background-color: var(--agri-surface);
+    color: #6B7280;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.truncate-cell { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Sidebar dashboard: laci geser di layar kecil, tetap terbuka di layar >= md. */
+.sidebar { --bs-offcanvas-width: 16rem; --bs-offcanvas-bg: transparent; }
+.sidebar-panel { overflow-y: auto; }
+@media (min-width: 768px) {
+    .sidebar.offcanvas-md {
+        flex: 0 0 16rem;
+        width: 16rem !important;
+        position: sticky;
+        top: 0;
+        height: 100vh !important;
+        align-self: flex-start;
+    }
+}
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, .8);
+    border-radius: .5rem;
+    padding: .5rem .75rem;
+    font-weight: 500;
+}
+.sidebar .nav-link:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.sidebar .nav-link.active { background: rgba(255, 255, 255, .15); color: #fff; }
+.sidebar .nav-link.disabled { color: rgba(255, 255, 255, .35); cursor: not-allowed; }
+.sidebar-section {
+    color: rgba(255, 255, 255, .5);
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    padding: 1rem .75rem .25rem;
+    text-transform: uppercase;
+}
+.topbar { height: 4rem; z-index: 1020; }
+
+/* Kartu produk di katalog */
+.product-card { transition: box-shadow .15s; color: inherit; text-decoration: none; }
+.product-card:hover { box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1); color: inherit; }
+.product-card:hover .product-name { color: var(--agri-brand); }
+.product-thumb { background: var(--agri-role-bg); font-size: 3rem; }
+
+/* Pilihan berbentuk kartu (metode pembayaran, peran) */
+.choice-input:checked + .choice-box { border-color: var(--agri-brand); background: var(--agri-role-bg); }
+.choice-box { cursor: pointer; border: 1px solid var(--agri-line); border-radius: .5rem; display: block; background: #fff; }
+
+/* Tab filter status berbentuk pil */
+.filter-pill {
+    border: 1px solid var(--agri-line);
+    border-radius: 999px;
+    background: #fff;
+    color: inherit;
+    font-size: .875rem;
+    padding: .2rem .8rem;
+    text-decoration: none;
+}
+.filter-pill.active {
+    border-color: var(--agri-brand);
+    background: var(--agri-role-bg);
+    color: var(--agri-brand-dark);
+    font-weight: 600;
+}
+
+/* Grafik batang di dashboard admin */
+.chart-bar { background: var(--agri-chart); border-radius: .25rem .25rem 0 0; width: 100%; flex: none; }
