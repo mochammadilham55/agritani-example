@@ -17,6 +17,9 @@ return new class extends Migration
             $table->text('shipping_address');
             $table->decimal('shipping_cost', 12, 2)->default(0);
             $table->text('notes')->nullable();
+            $table->string('courier', 50)->nullable();
+            $table->string('tracking_number', 50)->nullable()->comment('No. resi');
+            $table->timestamp('shipped_at')->nullable();
             $table->timestamps();
         });
     }

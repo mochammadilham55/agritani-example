@@ -1,7 +1,98 @@
 # AgriTani
 
-Marketplace hasil pertanian berbasis Laravel 12 dengan tiga peran: **Admin**, **Petani**, dan **Pembeli**.
-Pembagian tugas tim ada di [PEMBAGIAN_TUGAS.md](PEMBAGIAN_TUGAS.md).
+Marketplace hasil pertanian sederhana berbasis **Laravel 12** dan **MySQL**. Petani menjual hasil panen, pembeli memesan dan membayar, admin mengawasi. Proyek akhir kelompok (4 anggota).
+
+## Tujuan proyek
+1. Mempertemukan **petani langsung dengan pembeli** tanpa perantara.
+2. Memberi petani alat berjualan: kelola produk, terima pesanan, konfirmasi pembayaran, dan kirim barang.
+3. Memberi **admin** kendali dasar atas platform: akun petani, kategori, dan pemantauan pesanan.
+
+## Tiga peran pengguna
+| Peran | Yang dilakukan |
+|---|---|
+| **Pembeli** | Lihat katalog, belanja lewat keranjang, checkout, bayar, lacak pesanan, konfirmasi barang diterima |
+| **Petani** | Kelola produk, terima pesanan, konfirmasi pembayaran, isi resi pengiriman |
+| **Admin** | Aktifkan/nonaktifkan petani, kelola kategori, pantau semua pesanan |
+
+Petani yang baru mendaftar berstatus **nonaktif** sampai admin mengaktifkannya. Pembeli langsung aktif.
+
+## Alur kerja web
+```mermaid
+flowchart TD
+    A[Pembeli membuka katalog] --> B[Tambah produk ke keranjang]
+    B --> C[Checkout: isi alamat dan pilih metode bayar]
+    C --> D[Pesanan dibuat, status PENDING, stok berkurang]
+    D --> E{Metode bayar?}
+    E -- Transfer --> F[Pembeli upload bukti transfer]
+    F --> G[Petani konfirmasi pembayaran]
+    E -- COD --> H
+    G --> H[Petani konfirmasi pesanan, status DIPROSES]
+    H --> I[Petani isi kurir dan resi, status DIKIRIM]
+    I --> J[Pembeli tekan Pesanan Diterima, status SELESAI]
+    D -. pembeli batal / petani tolak .-> X[Status DIBATALKAN, stok dikembalikan]
+```
+
+Status pesanan:
+
+| Status | Arti | Siapa yang mengubah |
+|---|---|---|
+| `pending` | Pesanan baru, menunggu petani | Sistem saat checkout |
+| `diproses` | Petani menerima dan mengemas | Petani |
+| `dikirim` | Resi sudah diisi | Petani |
+| `selesai` | Barang diterima | Pembeli |
+| `dibatalkan` | Dibatalkan atau ditolak, stok kembali | Pembeli atau petani (hanya dari `pending`) |
+
+Aturan yang perlu dijelaskan saat presentasi:
+- Satu keranjang berisi produk dari beberapa petani akan **dipecah menjadi satu pesanan per petani**.
+- Stok dikurangi saat checkout. Kalau stok kurang, seluruh checkout dibatalkan (satu transaksi database).
+- Transfer harus dikonfirmasi pembayarannya dulu sebelum pesanan bisa diproses. COD bisa langsung diproses.
+- Ongkos kirim tetap per pesanan, diatur di `.env` (`AGRITANI_SHIPPING_COST`).
+
+## Fitur
+**Semua peran:** login, register, **lupa password** (tautan reset lewat email), dan **ubah password** di halaman profil.
+
+**Pembeli:** katalog dengan pencarian, filter kategori, dan urut harga · keranjang · checkout (transfer/COD) · upload bukti transfer · daftar dan detail pesanan · batalkan pesanan · konfirmasi diterima · edit profil dan ubah password.
+
+**Petani:** tambah/ubah/aktif-nonaktifkan produk (dengan foto) · pesanan masuk (konfirmasi/tolak) · konfirmasi atau tolak bukti pembayaran · isi resi pengiriman · dashboard (jumlah produk, terjual, pendapatan, stok menipis).
+
+**Admin:** dashboard (grafik pesanan 7 hari) · kelola petani · kelola kategori · daftar dan detail semua pesanan.
+
+## Struktur database (6 tabel inti)
+```mermaid
+erDiagram
+    users ||--o{ products : "petani memiliki"
+    categories ||--o{ products : "punya"
+    users ||--o{ orders : "pembeli membuat"
+    users ||--o{ carts : "punya"
+    products ||--o{ carts : "ada di"
+    orders ||--|{ order_items : "berisi"
+    products ||--o{ order_items : "dipesan"
+    orders ||--|| payments : "dibayar dengan"
+```
+
+| Tabel | Isi utama |
+|---|---|
+| `users` | name, email, password, **role** (admin/petani/pembeli), phone, address, photo, is_active |
+| `categories` | name, slug |
+| `products` | user_id (petani), category_id, name, price, stock, unit, weight, image, is_active |
+| `carts` | user_id, product_id, quantity |
+| `orders` | user_id (pembeli), total_price, shipping_cost, status, shipping_address, courier, tracking_number |
+| `order_items` | order_id, product_id, quantity, price, subtotal |
+| `payments` | order_id, amount, method (transfer/cod), status, proof_image |
+
+(`cache`, `jobs`, `sessions`, dan `password_reset_tokens` adalah tabel bawaan Laravel.)
+
+## Pembagian tugas (4 anggota)
+Setiap anggota punya **satu file route**, **controller**, **view**, dan **folder test** sendiri. Rincian file ada di [PEMBAGIAN_TUGAS.md](PEMBAGIAN_TUGAS.md).
+
+| Anggota | Modul | Yang dikerjakan | Tabel | File route | Folder test |
+|---|---|---|---|---|---|
+| **1** | Akun & Admin | Login, register, logout, lupa password, ubah password, hak akses per peran, profil, dashboard admin, kelola petani, lihat pesanan (admin) | `users` | `1-akun-admin.php` | `AkunAdmin` |
+| **2** | Produk & Katalog | Katalog publik, produk milik petani, kategori | `categories`, `products` | `2-produk.php` | `Produk` |
+| **3** | Belanja (sisi pembeli) | Keranjang, checkout, pesanan pembeli, upload bukti, batal, konfirmasi diterima | `carts`, `orders`, `order_items` | `3-belanja.php` | `Belanja` |
+| **4** | Pesanan Masuk (sisi petani) | Pesanan masuk, konfirmasi pembayaran, resi pengiriman, dashboard petani | `payments` | `4-pesanan-masuk.php` | `PesananMasuk` |
+
+Urutan pengerjaan yang disarankan (karena foreign key): **1 → 2 → 3 → 4**. Anggota 3 butuh produk dari anggota 2, dan anggota 4 butuh pesanan dari anggota 3.
 
 ## Kebutuhan
 - PHP 8.3+ dan Composer
@@ -9,7 +100,6 @@ Pembagian tugas tim ada di [PEMBAGIAN_TUGAS.md](PEMBAGIAN_TUGAS.md).
 - MySQL (disarankan Laragon di Windows)
 
 ## Setup
-
 ```bash
 # 1. Clone dan masuk ke folder proyek
 git clone https://github.com/mochammadilham55/agritani-example.git
@@ -50,9 +140,11 @@ php artisan serve
 npm run dev
 ```
 
-Buka http://127.0.0.1:8000. Di Laragon, aplikasi juga bisa diakses lewat virtual host-nya.
+Buka http://127.0.0.1:8000.
 
 `storage:link` wajib dijalankan supaya foto produk dan bukti transfer tampil.
+
+> **Sudah pernah setup versi lama?** Skema tabel berubah (tabel `shipments` dan `reviews` dihapus, kolom resi pindah ke `orders`). Jalankan `php artisan migrate:fresh --seed` untuk membangun ulang database. Perintah ini **menghapus semua data** di database tersebut.
 
 ## Akun uji
 Semua akun memakai password `password`.
@@ -61,13 +153,13 @@ Semua akun memakai password `password`.
 |---|---|
 | Admin | admin@agritani.test |
 | Petani | petani@agritani.test |
-| Petani 2 | petani2@agritani.test |
+| Petani 2 | petani2@aVgritani.test |
 | Pembeli | pembeli@agritani.test |
 
 Hanya untuk pengembangan lokal. Ganti atau hapus akun ini sebelum aplikasi dipasang di server sungguhan.
 
 ## Data contoh (opsional)
-Untuk mengisi dashboard dan laporan dengan pesanan, pembayaran, pengiriman, dan ulasan contoh:
+Untuk mengisi dashboard dengan pesanan dalam berbagai status, jalankan:
 
 ```bash
 php artisan db:seed --class=DemoSeeder
@@ -75,15 +167,32 @@ php artisan db:seed --class=DemoSeeder
 
 Seeder ini aman diulang dan dilewati jika pesanan sudah ada.
 
+## Lupa password saat demo
+Secara bawaan `MAIL_MAILER=log` di `.env`, jadi email **tidak dikirim sungguhan**. Tautan reset ditulis ke `storage/logs/laravel.log`:
+
+1. Di halaman login klik **Lupa password?**, masukkan email akun, lalu kirim.
+2. Buka `storage/logs/laravel.log`, cari baris terakhir yang memuat `/reset-password/`, lalu salin URL-nya ke browser.
+3. Isi password baru dan login kembali. Tautan hanya berlaku sekali dan kedaluwarsa dalam 60 menit.
+
+Untuk mengirim email sungguhan, isi `MAIL_MAILER=smtp` dan data SMTP di `.env` (misalnya Mailtrap atau Gmail).
+
+## Skenario demo untuk presentasi
+1. Login **pembeli** → buka katalog → tambah dua produk dari petani berbeda ke keranjang → checkout dengan **transfer**. Tunjukkan bahwa pesanan terpecah jadi dua.
+2. Buka **Pesanan Saya** → upload bukti transfer.
+3. Login **petani** → menu **Pembayaran** → konfirmasi → menu **Pesanan Masuk** → konfirmasi pesanan.
+4. Menu **Pengiriman** → isi kurir dan resi → status berubah ke Dikirim.
+5. Kembali ke **pembeli** → lihat resi → tekan **Pesanan Diterima** → status Selesai.
+6. Login **admin** → tunjukkan dashboard, daftar pesanan, kelola petani, dan kategori.
+
 ## Menjalankan test
 Test memakai SQLite in-memory, jadi tidak menyentuh database MySQL Anda.
 
 ```bash
 php artisan test                           # semua modul
-php artisan test tests/Feature/Ulasan      # satu modul saja
+php artisan test tests/Feature/Belanja     # satu modul saja
 ```
 
-Folder test: `Core`, `PetaniProduk`, `Pesanan`, `PembayaranPengiriman`, `Laporan`, `Ulasan`.
+Folder test: `AkunAdmin`, `Produk`, `Belanja`, `PesananMasuk`, dan `Core` (komponen bersama).
 
 ## Konfigurasi
 | Variabel `.env` | Fungsi | Bawaan |
@@ -91,8 +200,8 @@ Folder test: `Core`, `PetaniProduk`, `Pesanan`, `PembayaranPengiriman`, `Laporan
 | `AGRITANI_SHIPPING_COST` | Ongkos kirim tetap per pesanan (Rp) | 10000 |
 
 ## Struktur route
-`routes/web.php` hanya memuat login, register, dan logout. Route fitur dipisah per modul di `routes/modules/`:
-`1-petani-produk.php`, `2-pesanan.php`, `3-pembayaran-pengiriman.php`, `4-laporan.php`, `4-ulasan.php`.
+`routes/web.php` hanya memuat login, register, dan logout. Route fitur dipisah per anggota di `routes/modules/`:
+`1-akun-admin.php`, `2-produk.php`, `3-belanja.php`, `4-pesanan-masuk.php`.
 
 ## Panduan Git untuk Tim
 
@@ -112,15 +221,15 @@ git checkout main
 git pull
 
 # 2. Buat branch baru untuk satu fitur/perbaikan
-git checkout -b fitur/nama-singkat        # contoh: fitur/filter-ulasan
+git checkout -b fitur/nama-singkat        # contoh: fitur/filter-produk
 
 # 3. Kerjakan kode, lalu cek apa yang berubah
 git status
 git diff
 
 # 4. Simpan perubahan
-git add app/Http/Controllers/Pembeli/ReviewController.php   # tambahkan file yang Anda ubah
-git commit -m "Tambah filter rating di halaman ulasan"
+git add app/Http/Controllers/CatalogController.php   # tambahkan file yang Anda ubah
+git commit -m "Tambah filter harga di halaman katalog"
 
 # 5. Kirim branch Anda (bukan main)
 git push -u origin fitur/nama-singkat

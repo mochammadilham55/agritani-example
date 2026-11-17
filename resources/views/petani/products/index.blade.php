@@ -41,12 +41,7 @@
                             @else {{ $p->stock }} {{ $p->unit }} @endif
                         </td>
                         <td class="px-4 py-3">
-                            @if ($p->is_suspended)
-                                <x-badge status="ditangguhkan" label="Diturunkan admin" />
-                                @if ($p->suspend_reason)<span class="mt-1 block max-w-48 text-xs text-gray-500">{{ $p->suspend_reason }}</span>@endif
-                            @else
-                                <x-badge :status="$p->is_active ? 'aktif' : 'nonaktif'" />
-                            @endif
+                            <x-badge :status="$p->is_active ? 'aktif' : 'nonaktif'" />
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex justify-end gap-2">

@@ -5,13 +5,11 @@ namespace Database\Seeders;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\Review;
-use App\Models\Shipment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * Data contoh untuk mencoba dashboard/laporan: pesanan dalam berbagai status, pembayaran, pengiriman, dan ulasan.
+ * Data contoh untuk mencoba dashboard: pesanan dalam berbagai status beserta pembayaran dan resi pengiriman.
  * Jalankan: php artisan db:seed --class=DemoSeeder  (aman diulang; dilewati jika pesanan sudah ada)
  */
 class DemoSeeder extends Seeder
@@ -40,8 +38,6 @@ class DemoSeeder extends Seeder
             ['pending', 'transfer', 'menunggu', [['kangkung', 2]], 0],
             ['dibatalkan', 'cod', 'menunggu', [['pisang-cavendish', 1]], 5],
         ];
-
-        $completed = collect();
 
         foreach ($plans as [$status, $method, $payStatus, $lines, $daysAgo]) {
             $products = collect($lines)->map(fn ($l) => [Product::where('slug', $l[0])->firstOrFail(), $l[1]]);
@@ -73,36 +69,15 @@ class DemoSeeder extends Seeder
                     'confirmed_at' => $payStatus === 'dikonfirmasi' ? now()->subDays($daysAgo) : null,
                 ]);
 
-                if (in_array($status, ['diproses', 'dikirim', 'selesai'], true)) {
-                    Shipment::create([
-                        'order_id' => $order->id,
-                        'courier' => $status === 'diproses' ? null : 'JNE',
-                        'tracking_number' => $status === 'diproses' ? null : 'JNE'.str_pad((string) $order->id, 8, '0', STR_PAD_LEFT),
-                        'shipped_at' => $status === 'diproses' ? null : now()->subDays(max($daysAgo - 1, 0)),
-                        'estimated_arrival' => $status === 'dikirim' ? now()->addDays(2)->toDateString() : null,
-                        'status' => match ($status) {
-                            'diproses' => 'disiapkan', 'dikirim' => 'dikirim', default => 'tiba',
-                        },
-                    ]);
-                }
-
-                if ($status === 'selesai') {
-                    $completed->push($order->load('items'));
+                // Resi pengiriman disimpan langsung di tabel orders.
+                if (in_array($status, ['dikirim', 'selesai'], true)) {
+                    $order->forceFill([
+                        'courier' => 'JNE',
+                        'tracking_number' => 'JNE'.str_pad((string) $order->id, 8, '0', STR_PAD_LEFT),
+                        'shipped_at' => now()->subDays(max($daysAgo - 1, 0)),
+                    ])->save();
                 }
             }
-        }
-
-        // Ulasan: sebagian sudah disetujui, sebagian menunggu moderasi.
-        foreach ($completed->values() as $i => $order) {
-            $item = $order->items->first();
-            Review::create([
-                'order_id' => $order->id,
-                'user_id' => $buyer->id,
-                'product_id' => $item->product_id,
-                'rating' => [5, 4, 5, 3][$i % 4],
-                'comment' => ['Segar dan cepat sampai!', 'Kualitas bagus, harga oke.', 'Mantap, pasti beli lagi.', 'Lumayan, kemasan bisa lebih rapi.'][$i % 4],
-                'is_approved' => $i % 2 === 0,
-            ]);
         }
     }
 }

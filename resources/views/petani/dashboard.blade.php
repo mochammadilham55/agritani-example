@@ -8,7 +8,7 @@
         <x-stat-card label="Produk" :value="$productCount" />
         <x-stat-card label="Terjual" :value="number_format($soldQty, 0, ',', '.')" hint="Dari pesanan selesai" />
         <x-stat-card label="Pendapatan" :value="'Rp '.number_format($revenue, 0, ',', '.')" />
-        <x-stat-card label="Rating" :value="$rating ? $rating.' / 5' : '-'" hint="Ulasan yang disetujui" />
+        <x-stat-card label="Pesanan Baru" :value="$newOrders" hint="Menunggu konfirmasi" />
     </div>
 
     <div class="mt-8 grid gap-6 lg:grid-cols-3">

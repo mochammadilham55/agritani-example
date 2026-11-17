@@ -19,7 +19,6 @@
             <h1 class="text-2xl font-extrabold text-brand-dark">{{ $product->name }}</h1>
             <p class="mt-1 text-sm text-gray-500">
                 Petani: <strong>{{ $product->farmer?->name }}</strong>
-                @if ($rating) · ⭐ {{ $rating }} ({{ $reviews->count() }} ulasan) @endif
             </p>
 
             <p class="mt-4 text-3xl font-extrabold text-brand-dark">
@@ -48,20 +47,6 @@
             @endif
         </div>
     </div>
-
-    <section class="mt-12">
-        <h2 class="mb-3 font-bold text-brand-dark">Ulasan Pembeli</h2>
-        <div class="divide-y divide-line rounded-xl border border-line bg-white">
-            @forelse ($reviews as $review)
-                <div class="p-4 text-sm">
-                    <p class="font-semibold">{{ $review->user->name }} <span class="ml-2 font-normal text-amber-600">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span></p>
-                    @if ($review->comment)<p class="mt-1 text-gray-600">{{ $review->comment }}</p>@endif
-                </div>
-            @empty
-                <p class="p-8 text-center text-sm text-gray-400">Belum ada ulasan.</p>
-            @endforelse
-        </div>
-    </section>
 
     @if ($related->isNotEmpty())
         <section class="mt-12">

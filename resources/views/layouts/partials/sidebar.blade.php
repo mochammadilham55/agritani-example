@@ -5,7 +5,6 @@
         'pembeli' => [
             ['Dashboard', 'pembeli.dashboard', '🏠'],
             ['Pesanan Saya', 'pembeli.orders.index', '📦'],
-            ['Ulasan Saya', 'pembeli.reviews.index', '⭐'],
             ['Profil', 'profile.edit', '👤'],
         ],
         'petani' => [
@@ -17,17 +16,13 @@
             ['Pengiriman', 'petani.shipments.index', '🚚'],
             ['Pembayaran', 'petani.payments.index', '💳'],
             ['section' => 'Lainnya'],
-            ['Laporan', 'petani.reports.index', '📊'],
             ['Profil', 'profile.edit', '👤'],
         ],
         'admin' => [
             ['Dashboard', 'admin.dashboard', '🏠'],
             ['Daftar Petani', 'admin.farmers.index', '👥'],
-            ['Daftar Produk', 'admin.products.index', '🥬'],
             ['Kelola Kategori', 'admin.categories.index', '🏷️'],
             ['Daftar Pesanan', 'admin.orders.index', '📦'],
-            ['Moderasi Ulasan', 'admin.reviews.index', '💬'],
-            ['Laporan', 'admin.reports.index', '📊'],
         ],
     ];
     $items = $menus[auth()->user()->role] ?? [];
