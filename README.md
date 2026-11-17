@@ -100,6 +100,8 @@ Urutan pengerjaan yang disarankan (karena foreign key): **1 → 2 → 3 → 4**.
 
 Tidak perlu Node.js/npm. Tampilan memakai Bootstrap 5 yang sudah disertakan di `public/vendor/bootstrap/`, jadi tidak ada langkah build dan berjalan offline.
 
+> **Peringatan Node.js:** proyek ini **tidak memakai Node.js**. Jangan menjalankan `npm install`, `npm run dev`, atau `npm run build` karena `package.json` sudah dihapus. Versi Node apa pun (termasuk 18) tidak berpengaruh. Jika muncul error `Vite manifest not found`, berarti kode Anda masih versi lama: jalankan `git pull`, lalu `php artisan view:clear`.
+
 ## Setup
 ```bash
 # 1. Clone dan masuk ke folder proyek
