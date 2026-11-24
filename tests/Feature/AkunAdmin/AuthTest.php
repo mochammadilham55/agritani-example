@@ -128,4 +128,17 @@ class AuthTest extends TestCase
             'password' => 'password123', 'password_confirmation' => 'password123',
         ])->assertSessionHasErrors('role');
     }
+
+    public function test_login_has_no_remember_me_and_never_sets_remember_cookie(): void
+    {
+        $this->get('/login')->assertOk()->assertDontSee('Ingat saya');
+
+        User::create(['name' => 'Budi', 'email' => 'r@t.test', 'password' => 'password123', 'role' => 'pembeli', 'is_active' => true]);
+        $response = $this->post('/login', ['email' => 'r@t.test', 'password' => 'password123', 'remember' => 'on']);
+
+        $this->assertAuthenticated();
+        foreach ($response->headers->getCookies() as $cookie) {
+            $this->assertStringStartsNotWith('remember_web_', $cookie->getName());
+        }
+    }
 }

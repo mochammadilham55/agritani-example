@@ -22,11 +22,7 @@
             <x-password-input id="password" name="password" required />
             @error('password')<div class="small text-danger mt-1">{{ $message }}</div>@enderror
         </div>
-        <div class="d-flex align-items-center justify-content-between small mb-3">
-            <div class="form-check mb-0">
-                <input type="checkbox" name="remember" id="remember" class="form-check-input">
-                <label for="remember" class="form-check-label text-secondary">Ingat saya</label>
-            </div>
+        <div class="text-end small mb-3">
             <a href="{{ route('password.request') }}" class="fw-semibold">Lupa password?</a>
         </div>
         <button type="submit" class="btn btn-primary w-100 fw-semibold">Masuk</button>
