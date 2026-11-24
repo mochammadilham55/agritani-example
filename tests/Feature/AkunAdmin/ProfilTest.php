@@ -4,9 +4,7 @@ namespace Tests\Feature\AkunAdmin;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -31,12 +29,10 @@ class ProfilTest extends TestCase
 
     public function test_profile_update_cannot_change_role_or_active(): void
     {
-        Storage::fake('public');
-        $this->actingAs($this->buyer)->get('/profil')->assertOk();
+        $this->actingAs($this->buyer)->get('/profil')->assertOk()->assertDontSee('name="photo"', false);
 
         $this->put('/profil', [
             'name' => 'Nama Baru', 'email' => 'baru@t.test', 'phone' => '0812', 'address' => 'Jl. Baru',
-            'photo' => UploadedFile::fake()->image('me.jpg'),
             'role' => 'admin', 'is_active' => 0,
         ])->assertSessionHas('success');
 
@@ -45,7 +41,6 @@ class ProfilTest extends TestCase
         $this->assertSame('baru@t.test', $u->email);
         $this->assertSame('pembeli', $u->role);
         $this->assertTrue($u->is_active);
-        Storage::disk('public')->assertExists($u->photo);
     }
 
     public function test_profile_email_must_be_unique_but_own_email_is_allowed(): void

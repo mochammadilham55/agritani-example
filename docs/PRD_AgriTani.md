@@ -97,7 +97,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-1.1 | Register | Nama, email unik, no. HP opsional, password min. 8 karakter + konfirmasi. Pilih peran pembeli/petani. Petani wajib mengisi nama bank, nomor rekening (angka 6–30 digit), dan atas nama |
 | F-1.2 | Login / logout | Diarahkan ke dashboard sesuai peran. Akun belum aktif ditolak dengan pesan |
 | F-1.3 | Lupa password | Halaman lupa password hanya berisi isian email dan tombol Hubungi Admin via WhatsApp (lihat F-1.10–F-1.12). Reset lewat tautan email bawaan Laravel masih ada di backend (dibatasi 6 permintaan per menit) tetapi tidak ditampilkan |
-| F-1.4 | Profil | Ubah nama, email, no. HP, alamat, foto. Petani juga mengubah rekening bank (wajib) |
+| F-1.4 | Profil | Ubah nama, email, no. HP, alamat. Petani juga mengubah rekening bank (wajib) |
 | F-1.5 | Ubah password | Wajib mengisi password saat ini |
 | F-1.10 | Hubungi admin via WhatsApp | Tombol di halaman lupa password dan login membuka `wa.me/<nomor admin>` dengan pesan otomatis berisi email. Nomor diatur di `.env` (`AGRITANI_ADMIN_WHATSAPP`); kosong = tombol disembunyikan |
 | F-1.11 | Kelola pengguna & reset password oleh admin | Daftar semua pembeli dan petani (cari nama/email/no. HP, filter peran). Tombol Reset Password membuat password sementara (format `Tani-XXXX9999`) yang tampil sekali ke admin. Akun admin tidak bisa direset |
@@ -342,7 +342,7 @@ flowchart LR
 
 | Tabel | Kolom | Relasi |
 | --- | --- | --- |
-| `users` | id, name, email (unik), password, role (`admin`/`petani`/`pembeli`), phone, address, bank_name, bank_account_number, bank_account_name, photo, is_active, must_change_password, timestamps | hasMany products (sebagai petani), orders (sebagai pembeli), carts |
+| `users` | id, name, email (unik), password, role (`admin`/`petani`/`pembeli`), phone, address, bank_name, bank_account_number, bank_account_name, is_active, must_change_password, timestamps | hasMany products (sebagai petani), orders (sebagai pembeli), carts |
 | `categories` | id, name, slug (unik), description, image, timestamps | hasMany products |
 | `products` | id, user_id (FK users), category_id (FK categories), name, slug (unik), description, price, stock, unit, weight (gram), image, is_active, timestamps | belongsTo farmer (users), category; hasMany order_items, carts |
 | `carts` | id, user_id (FK), product_id (FK), quantity, timestamps. Unik (user_id, product_id) | belongsTo user, product |

@@ -32,7 +32,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 4 | `app/Models/User.php` | `hasRole():39`, `isPetani():49`, `hasBankAccount():34`, relasi `products():70`, `orders():76`, `carts():81`, cast `password => hashed` |
 | 5 | `app/Http/Controllers/Auth/AuthController.php` | `login():19` (`Auth::attempt`, tolak akun nonaktif), `register():50` (petani nonaktif + wajib rekening dengan `Rule::requiredIf`), `logout():86` |
 | 6 | `app/Http/Controllers/Auth/PasswordResetController.php` | `sendLink():22` dan `reset():36` memakai `Password` broker bawaan Laravel |
-| 7 | `app/Http/Controllers/ProfileController.php` | `update():18` (email unik kecuali milik sendiri, foto, rekening khusus petani), `password():58` (`current_password`) |
+| 7 | `app/Http/Controllers/ProfileController.php` | `update():18` (email unik kecuali milik sendiri, rekening khusus petani), `password():58` (`current_password`) |
 | 8 | `app/Http/Controllers/Admin/DashboardController.php:12` | Statistik + data grafik 7 hari |
 | 9 | `app/Http/Controllers/Admin/FarmerController.php` | `index():12` (cari + filter), `toggle():29` (aktifkan/tangguhkan) |
 | 9b | `app/Http/Controllers/Admin/UserController.php` + `app/Http/Middleware/EnsurePasswordChanged.php` | `index()` daftar pengguna, `resetPassword()` password sementara + `must_change_password`; middleware yang memaksa ganti password (didaftarkan di `bootstrap/app.php`) |

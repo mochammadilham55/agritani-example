@@ -113,7 +113,7 @@ erDiagram
 
 | Tabel | Isi utama |
 |---|---|
-| `users` | name, email, password, **role** (admin/petani/pembeli), phone, address, photo, is_active |
+| `users` | name, email, password, **role** (admin/petani/pembeli), phone, address, rekening bank (petani), is_active, must_change_password |
 | `categories` | name, slug |
 | `products` | user_id (petani), category_id, name, price, stock, unit, weight, image, is_active |
 | `carts` | user_id, product_id, quantity |

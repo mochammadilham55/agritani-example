@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -27,7 +26,6 @@ class ProfileController extends Controller
             'bank_name' => [Rule::requiredIf($user->isPetani()), 'nullable', 'string', 'max:50'],
             'bank_account_number' => [Rule::requiredIf($user->isPetani()), 'nullable', 'regex:/^[0-9]{6,30}$/'],
             'bank_account_name' => [Rule::requiredIf($user->isPetani()), 'nullable', 'string', 'max:255'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ], [
             'bank_name.required' => 'Nama bank wajib diisi untuk petani.',
             'bank_account_number.required' => 'Nomor rekening wajib diisi untuk petani.',
@@ -38,15 +36,6 @@ class ProfileController extends Controller
         // Pembeli dan admin tidak menyimpan data rekening.
         if (! $user->isPetani()) {
             unset($data['bank_name'], $data['bank_account_number'], $data['bank_account_name']);
-        }
-
-        unset($data['photo']);
-
-        if ($request->hasFile('photo')) {
-            if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
-            }
-            $data['photo'] = $request->file('photo')->store('photos', 'public');
         }
 
         $user->update($data); // role & is_active tidak ada di $data, jadi tidak bisa diubah dari sini
