@@ -182,4 +182,45 @@ class CheckoutPesananTest extends TestCase
             ->assertSee('a.n. Pak Slamet')
             ->assertSee('Petani belum mengisi rekening');
     }
+
+    public function test_cod_payment_is_confirmed_when_order_received(): void
+    {
+        $this->addToCart($this->product($this->user('petani', 'f@t.test'), 'Bayam', 5000, 10), 1);
+        $this->checkout('cod');
+        $order = Order::first();
+        $this->assertSame('menunggu', $order->payment->status);
+
+        $order->update(['status' => 'dikirim']);
+        $this->patch("/pembeli/pesanan/{$order->id}/selesai")->assertSessionHas('success');
+
+        $payment = $order->payment->fresh();
+        $this->assertSame('selesai', $order->fresh()->status);
+        $this->assertSame('dikonfirmasi', $payment->status);
+        $this->assertNotNull($payment->confirmed_at);
+    }
+
+    public function test_transfer_payment_is_not_changed_when_order_received(): void
+    {
+        $this->addToCart($this->product($this->user('petani', 'f@t.test'), 'Bayam', 5000, 10), 1);
+        $this->checkout('transfer');
+        $order = Order::first();
+        $order->payment->update(['status' => 'dikonfirmasi', 'confirmed_at' => now()->subDay()]);
+        $confirmedAt = $order->payment->fresh()->confirmed_at;
+
+        $order->update(['status' => 'dikirim']);
+        $this->patch("/pembeli/pesanan/{$order->id}/selesai")->assertSessionHas('success');
+
+        $this->assertEquals($confirmedAt, $order->payment->fresh()->confirmed_at);
+    }
+
+    public function test_cancelling_cod_order_rejects_its_payment(): void
+    {
+        $this->addToCart($this->product($this->user('petani', 'f@t.test'), 'Bayam', 5000, 10), 1);
+        $this->checkout('cod');
+        $order = Order::first();
+
+        $this->patch("/pembeli/pesanan/{$order->id}/batal")->assertSessionHas('success');
+
+        $this->assertSame('ditolak', $order->payment->fresh()->status);
+    }
 }

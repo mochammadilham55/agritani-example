@@ -31,7 +31,11 @@
                             </td>
                             <td><x-badge :status="$p->status" /></td>
                             <td>
-                                @if ($p->status === 'menunggu' && $p->order->status === 'pending' && ($p->method === 'cod' || $p->proof_image))
+                                @if ($p->method === 'cod')
+                                    @if ($p->status === 'menunggu')
+                                        <span class="small text-secondary d-block text-end">Otomatis saat pesanan diterima</span>
+                                    @endif
+                                @elseif ($p->status === 'menunggu' && $p->order->status === 'pending' && $p->proof_image)
                                     <div class="d-flex justify-content-end gap-2">
                                         <form method="POST" action="{{ route('petani.payments.confirm', $p->id) }}">@csrf @method('PATCH')
                                             <button class="btn btn-primary btn-sm fw-semibold">Konfirmasi</button></form>

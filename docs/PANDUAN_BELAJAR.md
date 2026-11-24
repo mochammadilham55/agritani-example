@@ -88,7 +88,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 4 | `config/agritani.php` | Ongkir dari `.env` |
 | 5 | `app/Http/Controllers/Pembeli/CartController.php` | `store():23` (tambah/menjumlah item, cek stok), `update():43`, `destroy():55` |
 | 6 | `app/Http/Controllers/Pembeli/CheckoutController.php` | `create():17` (kelompok per petani, total), `store():37` (validasi + `DB::transaction`), `placeOrders():64` (`lockForUpdate`, pecah per petani, harga dibekukan, kurangi stok, buat `Payment`) |
-| 7 | `app/Http/Controllers/Pembeli/OrderController.php` | `index():15`, `show():27`, `uploadProof():36`, `cancel():69` (stok kembali), `complete():88`, `authorizeOwner():101` |
+| 7 | `app/Http/Controllers/Pembeli/OrderController.php` | `index():15`, `show():27`, `uploadProof():36`, `cancel():69` (stok kembali), `complete():88` (COD → pembayaran otomatis dikonfirmasi), `authorizeOwner():101` |
 | 8 | `app/Http/Controllers/Pembeli/DashboardController.php:11` | Ringkasan pembeli |
 | 9 | View: `pembeli/cart`, `pembeli/checkout` (kotak `#transfer-info` berisi rekening petani), `pembeli/orders/index`, `pembeli/orders/show` (timeline, rekening tujuan, unggah bukti), `pembeli/dashboard` | |
 | 10 | `agritani.js` bagian `#transfer-info` | jQuery: rekening hanya tampil jika metode Transfer dipilih |
@@ -112,7 +112,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 2 | `database/migrations/..._000005_create_payments_table.php` | `enum` metode dan status, `cascadeOnDelete`, `proof_image` nullable |
 | 3 | `app/Models/Payment.php` | Konstanta status, relasi `order():24` |
 | 4 | `app/Http/Controllers/Petani/OrderController.php` | `index():14`, `show():26`, `confirm():34` (transfer harus dikonfirmasi dulu), `reject():52` (stok kembali), `findOrder():70` (`forFarmer` → 404 jika bukan miliknya) |
-| 5 | `app/Http/Controllers/Petani/PaymentController.php` | `confirm():25`, `reject():38`, `blocked():58` (aturan kapan boleh dikonfirmasi) |
+| 5 | `app/Http/Controllers/Petani/PaymentController.php` | `confirm():25`, `reject():38`, `blocked():58` (aturan kapan boleh dikonfirmasi; COD ditolak karena otomatis) |
 | 6 | `app/Http/Controllers/Petani/ShipmentController.php` | `update():25` (kurir + resi → `dikirim`) |
 | 7 | `app/Http/Controllers/Petani/DashboardController.php:12` | Statistik petani, stok menipis |
 | 8 | `app/Http/Controllers/Concerns/BuildsSalesReport.php` | `salesReport():18` (validasi filter, `with()` eager loading, `when($farmerId)`, ringkasan, produk terlaris); `salesCsv():82` (`streamDownload`, pemisah `;`) |

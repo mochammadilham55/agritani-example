@@ -1,0 +1,131 @@
+// AgriTani - ERD untuk https://dbdiagram.io (tempel di editor kiri)
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  email varchar(255) [not null, unique]
+  email_verified_at timestamp
+  password varchar(255) [not null]
+  role enum_role [not null, default: 'pembeli', note: 'admin / petani / pembeli']
+  phone varchar(20)
+  address text
+  bank_name varchar(50) [note: 'rekening petani']
+  bank_account_number varchar(30)
+  bank_account_name varchar(255)
+  photo varchar(255)
+  is_active boolean [not null, default: true]
+  remember_token varchar(100)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table categories {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  slug varchar(255) [not null, unique]
+  description text
+  image varchar(255)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table products {
+  id bigint [pk, increment]
+  user_id bigint [not null, note: 'petani pemilik']
+  category_id bigint [not null]
+  name varchar(255) [not null]
+  slug varchar(255) [not null, unique]
+  description text
+  price decimal(12,2) [not null]
+  stock int [not null, default: 0]
+  unit varchar(20) [not null, default: 'kg']
+  weight int [not null, default: 0, note: 'gram']
+  image varchar(255)
+  is_active boolean [not null, default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table carts {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  product_id bigint [not null]
+  quantity int [not null, default: 1]
+  created_at timestamp
+  updated_at timestamp
+  indexes {
+    (user_id, product_id) [unique]
+  }
+}
+
+Table orders {
+  id bigint [pk, increment]
+  user_id bigint [not null, note: 'pembeli']
+  total_price decimal(12,2) [not null]
+  status enum_order_status [not null, default: 'pending']
+  shipping_address text [not null]
+  shipping_cost decimal(12,2) [not null, default: 0]
+  notes text
+  courier varchar(50)
+  tracking_number varchar(50) [note: 'No. resi']
+  shipped_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  order_id bigint [not null]
+  product_id bigint [not null]
+  quantity int [not null]
+  price decimal(12,2) [not null, note: 'harga saat checkout']
+  subtotal decimal(12,2) [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table payments {
+  id bigint [pk, increment]
+  order_id bigint [not null]
+  amount decimal(12,2) [not null]
+  method enum_payment_method [not null]
+  status enum_payment_status [not null, default: 'menunggu']
+  proof_image varchar(255)
+  confirmed_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Enum enum_role {
+  admin
+  petani
+  pembeli
+}
+
+Enum enum_order_status {
+  pending
+  diproses
+  dikirim
+  selesai
+  dibatalkan
+}
+
+Enum enum_payment_method {
+  transfer
+  cod
+}
+
+Enum enum_payment_status {
+  menunggu
+  dikonfirmasi
+  ditolak
+}
+
+Ref: products.user_id > users.id [delete: cascade]
+Ref: products.category_id > categories.id [delete: restrict]
+Ref: carts.user_id > users.id [delete: cascade]
+Ref: carts.product_id > products.id [delete: cascade]
+Ref: orders.user_id > users.id [delete: cascade]
+Ref: order_items.order_id > orders.id [delete: cascade]
+Ref: order_items.product_id > products.id [delete: restrict]
+Ref: payments.order_id - orders.id [delete: cascade] // 1 pesanan : 1 pembayaran

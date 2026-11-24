@@ -43,7 +43,7 @@ Dokumen ini disusun dari kode repository `https://github.com/mochammadilham55/ag
 | Tahun ajaran | Gasal 2026/2027 |
 | Tim | 4 mahasiswa, tiap anggota memegang satu modul penuh |
 | Teknologi inti | Laravel 12, PHP 8.3, MySQL, Blade, Bootstrap 5.3.3, jQuery 3.7.1 |
-| Status | Semua fitur di dokumen ini sudah berjalan. 83 tes otomatis lolos |
+| Status | Semua fitur di dokumen ini sudah berjalan. 89 tes otomatis lolos |
 | Repository | `https://github.com/mochammadilham55/agritani-example` |
 
 AgriTani mempertemukan **petani** yang menjual hasil tani dengan **pembeli**, diawasi oleh **admin**. Petani mengelola produk, pesanan, pembayaran, pengiriman, dan laporan penjualan. Pembeli mencari produk, berbelanja lewat keranjang, membayar dengan transfer atau COD, dan memantau pesanan sampai diterima.
@@ -132,7 +132,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-4.1 | Pesanan masuk | Hanya pesanan berisi produk milik petani, filter status, detail pesanan |
 | F-4.2 | Konfirmasi pesanan | Hanya `pending`. Transfer harus sudah dikonfirmasi pembayarannya. Status → `diproses` |
 | F-4.3 | Tolak pesanan | Hanya `pending`. Stok dikembalikan, status → `dibatalkan` |
-| F-4.4 | Pembayaran | Konfirmasi atau tolak. Transfer butuh bukti. COD bisa langsung dikonfirmasi |
+| F-4.4 | Pembayaran | Petani mengonfirmasi atau menolak pembayaran transfer (butuh bukti). Pembayaran COD tidak dikonfirmasi manual: otomatis `dikonfirmasi` saat pembeli menerima pesanan, `ditolak` jika pesanan dibatalkan/ditolak |
 | F-4.5 | Pengiriman | Isi kurir dan nomor resi untuk pesanan `diproses` → status `dikirim`. Resi bisa diperbarui |
 | F-4.6 | Dashboard petani | Jumlah produk, terjual, pendapatan, pesanan baru, stok menipis, pesanan terbaru |
 | F-4.7 | Laporan penjualan | Filter tanggal dan status. Ringkasan (jumlah, selesai, dibatalkan, pendapatan), rincian pesanan, 5 produk terlaris, cari tabel (jQuery), unduh CSV, cetak |
@@ -146,7 +146,8 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 6. Pembatalan atau penolakan pesanan mengembalikan stok.
 7. Petani yang ditangguhkan tidak bisa login dan produknya hilang dari katalog.
 8. Rekening bank hanya disimpan untuk petani; isian rekening dari pembeli diabaikan.
-9. CSV laporan memakai pemisah titik koma dan baris `sep=;` agar terbaca per kolom di Excel berbahasa Indonesia.
+9. Status pembayaran COD mengikuti pesanan: `selesai` → pembayaran `dikonfirmasi`, `dibatalkan` → `ditolak`. Petani tidak mengonfirmasi COD secara manual.
+10. CSV laporan memakai pemisah titik koma dan baris `sep=;` agar terbaca per kolom di Excel berbahasa Indonesia.
 
 ## 6. Alur sistem
 
@@ -160,7 +161,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 6. Sistem membuat **satu pesanan per petani**, mengurangi stok, mengosongkan keranjang, dan membuat data pembayaran berstatus `menunggu`. Pesanan berstatus `pending`.
 7. Pembayaran:
    - Transfer: pembeli mentransfer ke rekening petani dan mengunggah bukti → petani **mengonfirmasi** atau **menolak** (ditolak → pembeli unggah ulang).
-   - COD: petani dapat langsung mengonfirmasi pesanan.
+   - COD: petani dapat langsung mengonfirmasi pesanan. Status pembayaran COD mengikuti pesanan (lihat 6.3).
 8. Petani mengonfirmasi pesanan → `diproses`.
 9. Petani mengisi kurir dan nomor resi → `dikirim`.
 10. Pembeli menekan **Pesanan Diterima** → `selesai`. Pendapatan tercatat.
@@ -212,7 +213,8 @@ stateDiagram-v2
 ```mermaid
 stateDiagram-v2
     [*] --> menunggu: checkout
-    menunggu --> dikonfirmasi: petani konfirmasi (transfer wajib ada bukti)
+    menunggu --> dikonfirmasi: transfer = petani konfirmasi bukti; COD = otomatis saat pesanan selesai
+    menunggu --> ditolak: COD = otomatis saat pesanan dibatalkan/ditolak
     menunggu --> ditolak: petani tolak bukti
     ditolak --> menunggu: pembeli unggah ulang bukti
 ```
@@ -419,7 +421,7 @@ Tidak memakai Node.js / npm / Vite. Bootstrap dan jQuery disimpan lokal sehingga
 | CRUD & Laporan | CRUD produk dan kategori; laporan penjualan dengan filter, CSV, cetak |
 
 ## 14. Pengujian
-PHPUnit, **83 tes / 374 assertion, semua lolos**, memakai SQLite in-memory. Perintah: `php artisan test`.
+PHPUnit, **89 tes / 394 assertion, semua lolos**, memakai SQLite in-memory. Perintah: `php artisan test`.
 
 | Folder | Cakupan |
 | --- | --- |

@@ -79,6 +79,11 @@ class OrderController extends Controller
                 $item->product->increment('stock', $item->quantity);
             }
             $order->update(['status' => Order::STATUS_DIBATALKAN]);
+
+            // COD belum dibayar, jadi pembayarannya ikut ditutup.
+            if ($order->payment?->method === 'cod') {
+                $order->payment->update(['status' => Payment::STATUS_DITOLAK]);
+            }
         });
 
         return back()->with('success', 'Pesanan dibatalkan.');
@@ -93,7 +98,14 @@ class OrderController extends Controller
             return back()->with('error', 'Pesanan belum dalam status Dikirim.');
         }
 
-        $order->update(['status' => Order::STATUS_SELESAI]);
+        DB::transaction(function () use ($order) {
+            $order->update(['status' => Order::STATUS_SELESAI]);
+
+            // COD dibayar saat barang diterima, jadi pembayarannya otomatis lunas.
+            if ($order->payment?->method === 'cod') {
+                $order->payment->update(['status' => Payment::STATUS_DIKONFIRMASI, 'confirmed_at' => now()]);
+            }
+        });
 
         return back()->with('success', 'Terima kasih! Pesanan ditandai selesai.');
     }

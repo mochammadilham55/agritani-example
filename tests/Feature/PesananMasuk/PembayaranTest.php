@@ -101,4 +101,38 @@ class PembayaranTest extends TestCase
         $this->patch("/petani/pembayaran/{$theirs->payment->id}/tolak")->assertNotFound();
         $this->assertSame('menunggu', $theirs->payment->fresh()->status);
     }
+
+    public function test_cod_payment_cannot_be_confirmed_or_rejected_manually(): void
+    {
+        $order = $this->order($this->farmer, 'pending', 'cod');
+        $payment = $order->payment;
+
+        $this->actingAs($this->farmer)->patch("/petani/pembayaran/{$payment->id}/konfirmasi")->assertSessionHas('error');
+        $this->actingAs($this->farmer)->patch("/petani/pembayaran/{$payment->id}/tolak")->assertSessionHas('error');
+        $this->assertSame('menunggu', $payment->fresh()->status);
+
+        $this->actingAs($this->farmer)->get('/petani/pembayaran')
+            ->assertOk()
+            ->assertSee('Otomatis saat pesanan diterima')
+            ->assertDontSee(route('petani.payments.confirm', $payment->id));
+    }
+
+    public function test_cod_order_can_still_be_processed_without_payment_confirmation(): void
+    {
+        $order = $this->order($this->farmer, 'pending', 'cod');
+
+        $this->actingAs($this->farmer)->patch("/petani/pesanan/{$order->id}/konfirmasi")->assertSessionHas('success');
+
+        $this->assertSame('diproses', $order->fresh()->status);
+    }
+
+    public function test_rejecting_cod_order_rejects_its_payment(): void
+    {
+        $order = $this->order($this->farmer, 'pending', 'cod');
+
+        $this->actingAs($this->farmer)->patch("/petani/pesanan/{$order->id}/tolak")->assertSessionHas('success');
+
+        $this->assertSame('dibatalkan', $order->fresh()->status);
+        $this->assertSame('ditolak', $order->payment->fresh()->status);
+    }
 }

@@ -62,6 +62,11 @@ class OrderController extends Controller
                 $item->product->increment('stock', $item->quantity);
             }
             $order->update(['status' => Order::STATUS_DIBATALKAN]);
+
+            // COD belum dibayar, jadi pembayarannya ikut ditutup.
+            if ($order->payment?->method === 'cod') {
+                $order->payment->update(['status' => Payment::STATUS_DITOLAK]);
+            }
         });
 
         return back()->with('success', 'Pesanan ditolak dan stok dikembalikan.');

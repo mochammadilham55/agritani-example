@@ -57,6 +57,9 @@ class PaymentController extends Controller
     /** Pesan error bila pembayaran tidak boleh diproses saat ini, atau null. */
     private function blocked(Payment $payment, bool $requireProof): ?string
     {
+        if ($payment->method === 'cod') {
+            return 'Pembayaran COD dikonfirmasi otomatis saat pembeli menerima pesanan.';
+        }
         if ($payment->order->status !== Order::STATUS_PENDING) {
             return 'Pesanan sudah tidak berstatus Pending.';
         }
