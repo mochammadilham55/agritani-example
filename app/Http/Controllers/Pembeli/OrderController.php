@@ -98,14 +98,7 @@ class OrderController extends Controller
             return back()->with('error', 'Pesanan belum dalam status Dikirim.');
         }
 
-        DB::transaction(function () use ($order) {
-            $order->update(['status' => Order::STATUS_SELESAI]);
-
-            // COD dibayar saat barang diterima, jadi pembayarannya otomatis lunas.
-            if ($order->payment?->method === 'cod') {
-                $order->payment->update(['status' => Payment::STATUS_DIKONFIRMASI, 'confirmed_at' => now()]);
-            }
-        });
+        $order->markCompleted(); // COD ikut dikonfirmasi, lihat Order::markCompleted()
 
         return back()->with('success', 'Terima kasih! Pesanan ditandai selesai.');
     }

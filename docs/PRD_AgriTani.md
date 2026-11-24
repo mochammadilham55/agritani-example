@@ -123,7 +123,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-3.5 | Pesanan saya | Daftar dengan filter status, detail dengan timeline 4 langkah, rincian biaya, resi |
 | F-3.6 | Bukti transfer | Unggah JPG/PNG maks. 2 MB. Rekening tujuan tampil di detail pesanan. Bisa unggah ulang jika ditolak |
 | F-3.7 | Batalkan | Hanya saat `pending`. Stok dikembalikan |
-| F-3.8 | Pesanan diterima | Hanya saat `dikirim`, status menjadi `selesai` |
+| F-3.8 | Pesanan diterima | Hanya saat `dikirim`, status menjadi `selesai`. Jika pembeli tidak menekan dalam 7 hari sejak dikirim, pesanan selesai otomatis (tanggalnya tampil di detail pesanan) |
 | F-3.9 | Dashboard pembeli | Pesanan aktif, selesai, total belanja, riwayat terbaru |
 
 ### 4.4 Modul 4 — Pesanan Masuk & Laporan (sisi petani)
@@ -134,6 +134,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-4.3 | Tolak pesanan | Hanya `pending`. Stok dikembalikan, status → `dibatalkan` |
 | F-4.4 | Pembayaran | Petani mengonfirmasi atau menolak pembayaran transfer (butuh bukti). Pembayaran COD tidak dikonfirmasi manual: otomatis `dikonfirmasi` saat pembeli menerima pesanan, `ditolak` jika pesanan dibatalkan/ditolak |
 | F-4.5 | Pengiriman | Isi kurir dan nomor resi untuk pesanan `diproses` → status `dikirim`. Resi bisa diperbarui |
+| F-4.8 | Selesai otomatis | Perintah `php artisan orders:auto-complete` (dijadwalkan tiap jam) menandai selesai pesanan `dikirim` yang sudah lewat `AGRITANI_AUTO_COMPLETE_DAYS` hari (bawaan 7). COD ikut dikonfirmasi |
 | F-4.6 | Dashboard petani | Jumlah produk, terjual, pendapatan, pesanan baru, stok menipis, pesanan terbaru |
 | F-4.7 | Laporan penjualan | Filter tanggal dan status. Ringkasan (jumlah, selesai, dibatalkan, pendapatan), rincian pesanan, 5 produk terlaris, cari tabel (jQuery), unduh CSV, cetak |
 
@@ -147,7 +148,8 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 7. Petani yang ditangguhkan tidak bisa login dan produknya hilang dari katalog.
 8. Rekening bank hanya disimpan untuk petani; isian rekening dari pembeli diabaikan.
 9. Status pembayaran COD mengikuti pesanan: `selesai` → pembayaran `dikonfirmasi`, `dibatalkan` → `ditolak`. Petani tidak mengonfirmasi COD secara manual.
-10. CSV laporan memakai pemisah titik koma dan baris `sep=;` agar terbaca per kolom di Excel berbahasa Indonesia.
+10. Pesanan `dikirim` yang tidak dikonfirmasi pembeli otomatis `selesai` setelah 7 hari (`AGRITANI_AUTO_COMPLETE_DAYS`), lewat scheduler Laravel. Scheduler harus berjalan (`php artisan schedule:work` saat pengembangan).
+11. CSV laporan memakai pemisah titik koma dan baris `sep=;` agar terbaca per kolom di Excel berbahasa Indonesia.
 
 ## 6. Alur sistem
 
@@ -164,7 +166,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
    - COD: petani dapat langsung mengonfirmasi pesanan. Status pembayaran COD mengikuti pesanan (lihat 6.3).
 8. Petani mengonfirmasi pesanan → `diproses`.
 9. Petani mengisi kurir dan nomor resi → `dikirim`.
-10. Pembeli menekan **Pesanan Diterima** → `selesai`. Pendapatan tercatat.
+10. Pembeli menekan **Pesanan Diterima** → `selesai`. Jika tidak ditekan, pesanan otomatis `selesai` 7 hari setelah dikirim. Pendapatan tercatat.
 11. Selama `pending`, pembeli bisa **membatalkan** atau petani bisa **menolak** → `dibatalkan`, stok kembali.
 12. Petani dan admin memantau dashboard dan laporan penjualan.
 
@@ -196,7 +198,7 @@ stateDiagram-v2
     pending --> diproses: petani konfirmasi (transfer harus sudah dibayar)
     pending --> dibatalkan: pembeli batal / petani tolak (stok kembali)
     diproses --> dikirim: petani isi kurir + resi
-    dikirim --> selesai: pembeli konfirmasi diterima
+    dikirim --> selesai: pembeli konfirmasi diterima / otomatis 7 hari setelah dikirim
     selesai --> [*]
     dibatalkan --> [*]
 ```
@@ -206,7 +208,7 @@ stateDiagram-v2
 | `pending` | Pesanan baru, menunggu pembayaran/konfirmasi | Sistem saat checkout |
 | `diproses` | Pesanan dikonfirmasi petani, sedang dikemas | Petani |
 | `dikirim` | Sudah diserahkan ke kurir, ada nomor resi | Petani |
-| `selesai` | Barang diterima pembeli | Pembeli |
+| `selesai` | Barang diterima pembeli | Pembeli, atau sistem otomatis 7 hari setelah dikirim |
 | `dibatalkan` | Dibatalkan pembeli atau ditolak petani | Pembeli / petani |
 
 ### 6.3 Alur status pembayaran
@@ -384,7 +386,8 @@ File: `routes/web.php`, `routes/modules/1-akun-admin.php`, `2-produk.php`, `3-be
 | Model | `app/Models`: User, Category, Product, Cart, Order, OrderItem, Payment |
 | View | `resources/views` — layout `app`, `guest`, `public`; komponen `x-badge`, `x-stat-card`, `x-product-card`, `x-password-input`, `x-orders-table` |
 | Aset | `public/vendor/bootstrap`, `public/vendor/jquery`, `public/css/agritani.css`, `public/js/agritani.js` |
-| Konfigurasi | `config/agritani.php` (ongkir) |
+| Konfigurasi | `config/agritani.php` (ongkir, batas hari selesai otomatis) |
+| Perintah terjadwal | `app/Console/Commands/AutoCompleteOrders.php`, jadwal di `routes/console.php` |
 | Seeder | `UserSeeder`, `CategorySeeder`, `ProductSeeder`, `DemoSeeder` |
 
 Tidak memakai Node.js / npm / Vite. Bootstrap dan jQuery disimpan lokal sehingga berjalan offline.
@@ -421,14 +424,14 @@ Tidak memakai Node.js / npm / Vite. Bootstrap dan jQuery disimpan lokal sehingga
 | CRUD & Laporan | CRUD produk dan kategori; laporan penjualan dengan filter, CSV, cetak |
 
 ## 14. Pengujian
-PHPUnit, **89 tes / 394 assertion, semua lolos**, memakai SQLite in-memory. Perintah: `php artisan test`.
+PHPUnit, **96 tes / 416 assertion, semua lolos**, memakai SQLite in-memory. Perintah: `php artisan test`.
 
 | Folder | Cakupan |
 | --- | --- |
 | `tests/Feature/AkunAdmin` | Register (termasuk wajib rekening untuk petani), login, lupa & ubah password, profil (rekening petani, validasi angka), pembatasan peran, kelola petani, pesanan admin |
 | `tests/Feature/Produk` | CRUD produk, kepemilikan, kategori |
 | `tests/Feature/Belanja` | Katalog, keranjang, checkout dan pemecahan pesanan, tampilan rekening petani di checkout, pembatalan, bukti bayar |
-| `tests/Feature/PesananMasuk` | Pesanan petani, konfirmasi pembayaran, pengiriman, dashboard |
+| `tests/Feature/PesananMasuk` | Pesanan petani, konfirmasi pembayaran, pengiriman, selesai otomatis, dashboard |
 | `tests/Feature/Laporan` | Laporan petani dan admin, filter, validasi tanggal, CSV, hak akses |
 | `tests/Feature/Core` | Komponen bersama |
 

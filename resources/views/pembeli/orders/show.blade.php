@@ -117,6 +117,9 @@
                     @csrf @method('PATCH')
                     <button class="btn btn-primary w-100 fw-semibold">Pesanan Diterima</button>
                 </form>
+                @if ($order->autoCompleteAt())
+                    <p class="small text-secondary text-center mb-0">Jika tidak dikonfirmasi, pesanan otomatis selesai pada {{ $order->autoCompleteAt()->format('d M Y H:i') }}.</p>
+                @endif
             @endif
 
             @if ($order->status === 'pending')

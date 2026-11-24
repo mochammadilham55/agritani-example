@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 #[Fillable(['user_id', 'total_price', 'status', 'shipping_address', 'shipping_cost', 'notes', 'courier', 'tracking_number', 'shipped_at'])]
 class Order extends Model
@@ -70,5 +72,37 @@ class Order extends Model
     public function isCompleted(): bool
     {
         return $this->status === self::STATUS_SELESAI;
+    }
+
+    /**
+     * Tandai pesanan selesai. Dipakai saat pembeli menekan "Pesanan Diterima"
+     * dan saat selesai otomatis. COD dibayar saat barang diterima, jadi
+     * pembayarannya ikut dikonfirmasi.
+     */
+    public function markCompleted(): void
+    {
+        DB::transaction(function () {
+            $this->update(['status' => self::STATUS_SELESAI]);
+
+            if ($this->payment?->method === 'cod') {
+                $this->payment->update(['status' => Payment::STATUS_DIKONFIRMASI, 'confirmed_at' => now()]);
+            }
+        });
+    }
+
+    /** Tanggal pesanan dikirim akan selesai otomatis (null jika belum dikirim). */
+    public function autoCompleteAt(): ?Carbon
+    {
+        return $this->status === self::STATUS_DIKIRIM && $this->shipped_at
+            ? $this->shipped_at->copy()->addDays(config('agritani.auto_complete_days'))
+            : null;
+    }
+
+    /** Pesanan dikirim yang sudah melewati batas hari tanpa konfirmasi pembeli. */
+    public function scopeReadyToAutoComplete(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_DIKIRIM)
+            ->whereNotNull('shipped_at')
+            ->where('shipped_at', '<=', now()->subDays(config('agritani.auto_complete_days')));
     }
 }

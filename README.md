@@ -241,6 +241,13 @@ Folder test: `AkunAdmin`, `Produk`, `Belanja`, `PesananMasuk`, `Laporan` (lapora
 | Variabel `.env` | Fungsi | Bawaan |
 |---|---|---|
 | `AGRITANI_SHIPPING_COST` | Ongkos kirim tetap per pesanan (Rp) | 10000 |
+| `AGRITANI_AUTO_COMPLETE_DAYS` | Pesanan berstatus Dikirim otomatis Selesai setelah sekian hari jika pembeli tidak menekan "Pesanan Diterima" | 7 |
+
+### Selesai otomatis (scheduler)
+Perintah `php artisan orders:auto-complete` menandai selesai pesanan yang sudah dikirim lebih dari `AGRITANI_AUTO_COMPLETE_DAYS` hari. Perintah ini dijadwalkan setiap jam di `routes/console.php`, tetapi jadwal hanya berjalan jika scheduler aktif:
+
+- Saat pengembangan/demo: buka terminal kedua dan jalankan `php artisan schedule:work`, atau jalankan `php artisan orders:auto-complete` secara manual.
+- Di server: tambahkan cron `* * * * * php /path/ke/proyek/artisan schedule:run`.
 
 ## Struktur route
 `routes/web.php` hanya memuat login, register, dan logout. Route fitur dipisah per anggota di `routes/modules/`:

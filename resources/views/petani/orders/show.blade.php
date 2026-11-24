@@ -38,6 +38,9 @@
                     @if ($order->tracking_number)
                         <p class="mt-3 mb-0">Kurir: <strong>{{ $order->courier }}</strong> · Resi: <span class="font-monospace">{{ $order->tracking_number }}</span></p>
                     @endif
+                    @if ($order->autoCompleteAt())
+                        <p class="small text-secondary mt-2 mb-0">Otomatis selesai pada {{ $order->autoCompleteAt()->format('d M Y H:i') }} jika pembeli belum mengonfirmasi.</p>
+                    @endif
                 </div>
             </section>
         </div>

@@ -84,7 +84,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | --- | --- | --- |
 | 1 | `routes/modules/3-belanja.php` | Grup `auth` + `role:pembeli`, route keranjang, checkout, pesanan (`PATCH /batal`, `/selesai`, `POST /bukti`) |
 | 2 | `database/migrations/..._000003_create_orders_table.php`, `..._000004_create_order_items_table.php`, `..._000006_create_carts_table.php` | `unique(['user_id','product_id'])` di keranjang, kolom status pesanan |
-| 3 | `app/Models/Cart.php`, `Order.php`, `OrderItem.php` | `Order`: konstanta status, `buyer():38`, `items():43`, `payment():48`, `scopeForFarmer():59`, `grandTotal():65`; `Cart::getSubtotalAttribute():27` (accessor) |
+| 3 | `app/Models/Cart.php`, `Order.php`, `OrderItem.php` | `Order`: konstanta status, `buyer():38`, `items():43`, `payment():48`, `scopeForFarmer():59`, `grandTotal():65`, `markCompleted()` (selesai + COD dikonfirmasi, dipakai pembeli dan selesai otomatis); `Cart::getSubtotalAttribute():27` (accessor) |
 | 4 | `config/agritani.php` | Ongkir dari `.env` |
 | 5 | `app/Http/Controllers/Pembeli/CartController.php` | `store():23` (tambah/menjumlah item, cek stok), `update():43`, `destroy():55` |
 | 6 | `app/Http/Controllers/Pembeli/CheckoutController.php` | `create():17` (kelompok per petani, total), `store():37` (validasi + `DB::transaction`), `placeOrders():64` (`lockForUpdate`, pecah per petani, harga dibekukan, kurangi stok, buat `Payment`) |
@@ -119,8 +119,9 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 9 | `app/Http/Controllers/Petani/ReportController.php:14` | `?export=csv` → CSV, selain itu view |
 | 10 | View: `petani/dashboard`, `petani/orders/*`, `petani/payments/index`, `petani/shipments/index`, `petani/reports/index`, `reports/_sales`, `components/stat-card` | `@include` partial laporan yang dipakai petani & admin |
 | 11 | `agritani.js` bagian `data-filter-table` dan `[data-print]`; `agritani.css` bagian `@media print` | Cari tabel tanpa reload, cetak laporan |
-| 12 | `database/seeders/DemoSeeder.php` | Pesanan contoh |
-| 13 | Tes: `PesananPetaniTest`, `PembayaranTest`, `PengirimanTest`, `DashboardTest`, `LaporanPenjualanTest` | |
+| 12 | `app/Console/Commands/AutoCompleteOrders.php` + `routes/console.php` | Perintah artisan `orders:auto-complete` dan jadwal tiap jam (`Schedule::command(...)->hourly()`); scope `Order::readyToAutoComplete()` |
+| 13 | `database/seeders/DemoSeeder.php` | Pesanan contoh |
+| 14 | Tes: `PesananPetaniTest`, `PembayaranTest`, `PengirimanTest`, `SelesaiOtomatisTest`, `DashboardTest`, `LaporanPenjualanTest` | |
 
 **Pertanyaan latihan**
 1. Bagaimana petani hanya melihat pesanan berisi produknya? (`Order::forFarmer`)
