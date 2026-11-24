@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Atur Ulang Password — AgriTani')
+@section('title', 'Atur Ulang Password — Tanimart')
 
 @section('content')
     <h1 class="h4 fw-bold text-brand-dark">Atur Ulang Password</h1>

@@ -25,7 +25,7 @@ class BuktiBayarTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['agritani.shipping_cost' => 10000]);
+        config(['tanimart.shipping_cost' => 10000]);
         $this->cat = Category::create(['name' => 'Sayur', 'slug' => 'sayur']);
         $this->buyer = $this->user('pembeli', 'b@t.test');
     }

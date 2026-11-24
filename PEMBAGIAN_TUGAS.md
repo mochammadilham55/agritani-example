@@ -1,4 +1,4 @@
-# Pembagian Tugas AgriTani (4 Anggota)
+# Pembagian Tugas Tanimart (4 Anggota)
 
 Setiap anggota punya file route sendiri di `routes/modules/` dan folder test sendiri di `tests/Feature/`.
 Jalankan test modul sendiri: `php artisan test tests/Feature/<Folder>`.
@@ -44,7 +44,7 @@ Urutan pengerjaan (karena foreign key): **1 → 2 → 3 → 4**.
 - **Migration:** `create_orders_table`, `create_order_items_table`, `create_carts_table`
 - **Controller:** `Pembeli/CartController`, `Pembeli/CheckoutController`, `Pembeli/OrderController`, `Pembeli/DashboardController`
 - **View:** `pembeli/*`
-- **Config:** `config/agritani.php` (ongkir)
+- **Config:** `config/tanimart.php` (ongkir)
 - **Test:** `KatalogKeranjangTest`, `CheckoutPesananTest`, `BuktiBayarTest`
 
 **Yang dijelaskan saat presentasi:** alur keranjang sampai checkout, pesanan dipecah per petani, stok berkurang dalam satu transaksi database (gagal satu, batal semua), pembatalan mengembalikan stok, upload bukti transfer.
@@ -64,7 +64,7 @@ Urutan pengerjaan (karena foreign key): **1 → 2 → 3 → 4**.
 ---
 
 ## File inti (ubah hanya setelah disepakati bersama)
-`routes/web.php`, `app/Http/Middleware/RoleMiddleware.php`, `resources/views/layouts/*` (termasuk `sidebar`), komponen `badge`, `public/css/agritani.css`, `public/js/agritani.js` (jQuery), `DatabaseSeeder`.
+`routes/web.php`, `app/Http/Middleware/RoleMiddleware.php`, `resources/views/layouts/*` (termasuk `sidebar`), komponen `badge`, `public/css/tanimart.css`, `public/js/tanimart.js` (jQuery), `DatabaseSeeder`.
 
 ## Titik singgung antar modul (koordinasi sebelum mengubah)
 | Yang dipakai | Milik | Dipakai oleh |

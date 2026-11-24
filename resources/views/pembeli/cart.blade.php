@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Keranjang — AgriTani')
+@section('title', 'Keranjang — Tanimart')
 
 @section('content')
     <h1 class="fs-2 fw-bold text-brand-dark mb-4">Keranjang Belanja</h1>

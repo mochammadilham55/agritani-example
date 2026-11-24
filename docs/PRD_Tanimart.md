@@ -1,4 +1,4 @@
-# PRD dan Alur Sistem — AgriTani (Marketplace Hasil Pertanian)
+# PRD dan Alur Sistem — Tanimart (Marketplace Hasil Pertanian)
 
 Dokumen ini disusun dari kode repository `https://github.com/mochammadilham55/agritani-example` (branch `main`, 17 November 2026). Isinya menggambarkan aplikasi **sebagaimana sudah dibuat**, bukan rencana. Setiap fakta bisa dicek ke file yang disebutkan.
 
@@ -36,7 +36,7 @@ Dokumen ini disusun dari kode repository `https://github.com/mochammadilham55/ag
 
 | Item | Isi |
 | --- | --- |
-| Nama aplikasi | AgriTani |
+| Nama aplikasi | Tanimart |
 | Jenis | Aplikasi web marketplace hasil pertanian |
 | Matakuliah | Pemrograman Berbasis Website |
 | Program studi | Informatika, Fakultas Ilmu Komputer, Universitas Jember |
@@ -46,7 +46,7 @@ Dokumen ini disusun dari kode repository `https://github.com/mochammadilham55/ag
 | Status | Semua fitur di dokumen ini sudah berjalan. 89 tes otomatis lolos |
 | Repository | `https://github.com/mochammadilham55/agritani-example` |
 
-AgriTani mempertemukan **petani** yang menjual hasil tani dengan **pembeli**, diawasi oleh **admin**. Petani mengelola produk, pesanan, pembayaran, pengiriman, dan laporan penjualan. Pembeli mencari produk, berbelanja lewat keranjang, membayar dengan transfer atau COD, dan memantau pesanan sampai diterima.
+Tanimart mempertemukan **petani** yang menjual hasil tani dengan **pembeli**, diawasi oleh **admin**. Petani mengelola produk, pesanan, pembayaran, pengiriman, dan laporan penjualan. Pembeli mencari produk, berbelanja lewat keranjang, membayar dengan transfer atau COD, dan memantau pesanan sampai diterima.
 
 ## 2. Latar belakang, rumusan masalah, tujuan, batasan
 
@@ -73,7 +73,7 @@ AgriTani mempertemukan **petani** yang menjual hasil tani dengan **pembeli**, di
 - Tiga peran: pembeli, petani, admin.
 - 7 tabel utama: `users`, `categories`, `products`, `carts`, `orders`, `order_items`, `payments`.
 - Pembayaran: transfer bank manual (pembeli mengunggah bukti, petani mengonfirmasi) dan COD. Tidak ada payment gateway.
-- Ongkos kirim tetap per pesanan (`AGRITANI_SHIPPING_COST`, bawaan Rp 10.000), tidak dihitung dari jarak atau berat.
+- Ongkos kirim tetap per pesanan (`TANIMART_SHIPPING_COST`, bawaan Rp 10.000), tidak dihitung dari jarak atau berat.
 - Tidak ada ulasan, chat, atau notifikasi email/WhatsApp. Email lupa password pada mode pengembangan dicatat ke log.
 - Laporan yang tersedia hanya laporan penjualan (petani dan admin). Ekspor berupa CSV, belum PDF.
 - Aplikasi dijalankan lokal, belum di-deploy.
@@ -99,7 +99,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-1.3 | Lupa password | Halaman lupa password hanya berisi isian email dan tombol Hubungi Admin via WhatsApp (lihat F-1.10–F-1.12). Reset lewat tautan email bawaan Laravel masih ada di backend (dibatasi 6 permintaan per menit) tetapi tidak ditampilkan |
 | F-1.4 | Profil | Ubah nama, email, no. HP, alamat. Petani juga mengubah rekening bank (wajib) |
 | F-1.5 | Ubah password | Wajib mengisi password saat ini |
-| F-1.10 | Hubungi admin via WhatsApp | Tombol di halaman lupa password dan login membuka `wa.me/<nomor admin>` dengan pesan otomatis berisi email. Nomor diatur di `.env` (`AGRITANI_ADMIN_WHATSAPP`); kosong = tombol disembunyikan |
+| F-1.10 | Hubungi admin via WhatsApp | Tombol di halaman lupa password dan login membuka `wa.me/<nomor admin>` dengan pesan otomatis berisi email. Nomor diatur di `.env` (`TANIMART_ADMIN_WHATSAPP`); kosong = tombol disembunyikan |
 | F-1.11 | Kelola pengguna & reset password oleh admin | Daftar semua pembeli dan petani (cari nama/email/no. HP, filter peran). Tombol Reset Password membuat password sementara (format `Tani-XXXX9999`) yang tampil sekali ke admin. Akun admin tidak bisa direset |
 | F-1.12 | Wajib ganti password sementara | Pengguna dengan password sementara hanya bisa membuka halaman profil dan logout sampai password diganti (middleware `EnsurePasswordChanged`) |
 | F-1.6 | Dashboard admin | Total pengguna, produk aktif, pesanan hari ini, pendapatan, grafik pesanan 7 hari, pesanan terbaru |
@@ -137,7 +137,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-4.3 | Tolak pesanan | Hanya `pending`. Stok dikembalikan, status → `dibatalkan` |
 | F-4.4 | Pembayaran | Petani mengonfirmasi atau menolak pembayaran transfer (butuh bukti). Pembayaran COD tidak dikonfirmasi manual: otomatis `dikonfirmasi` saat pembeli menerima pesanan, `ditolak` jika pesanan dibatalkan/ditolak |
 | F-4.5 | Pengiriman | Isi kurir dan nomor resi untuk pesanan `diproses` → status `dikirim`. Resi bisa diperbarui |
-| F-4.8 | Selesai otomatis | Perintah `php artisan orders:auto-complete` (dijadwalkan tiap jam) menandai selesai pesanan `dikirim` yang sudah lewat `AGRITANI_AUTO_COMPLETE_DAYS` hari (bawaan 7). COD ikut dikonfirmasi |
+| F-4.8 | Selesai otomatis | Perintah `php artisan orders:auto-complete` (dijadwalkan tiap jam) menandai selesai pesanan `dikirim` yang sudah lewat `TANIMART_AUTO_COMPLETE_DAYS` hari (bawaan 7). COD ikut dikonfirmasi |
 | F-4.6 | Dashboard petani | Jumlah produk, terjual, pendapatan, pesanan baru, stok menipis, pesanan terbaru |
 | F-4.7 | Laporan penjualan | Filter tanggal dan status. Ringkasan (jumlah, selesai, dibatalkan, pendapatan), rincian pesanan, 5 produk terlaris, cari tabel (jQuery), unduh CSV, cetak |
 
@@ -151,7 +151,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 7. Petani yang ditangguhkan tidak bisa login dan produknya hilang dari katalog.
 8. Rekening bank hanya disimpan untuk petani; isian rekening dari pembeli diabaikan.
 9. Status pembayaran COD mengikuti pesanan: `selesai` → pembayaran `dikonfirmasi`, `dibatalkan` → `ditolak`. Petani tidak mengonfirmasi COD secara manual.
-10. Pesanan `dikirim` yang tidak dikonfirmasi pembeli otomatis `selesai` setelah 7 hari (`AGRITANI_AUTO_COMPLETE_DAYS`), lewat scheduler Laravel. Scheduler harus berjalan (`php artisan schedule:work` saat pengembangan).
+10. Pesanan `dikirim` yang tidak dikonfirmasi pembeli otomatis `selesai` setelah 7 hari (`TANIMART_AUTO_COMPLETE_DAYS`), lewat scheduler Laravel. Scheduler harus berjalan (`php artisan schedule:work` saat pengembangan).
 11. CSV laporan memakai pemisah titik koma dan baris `sep=;` agar terbaca per kolom di Excel berbahasa Indonesia.
 
 ## 6. Alur sistem
@@ -390,8 +390,8 @@ File: `routes/web.php`, `routes/modules/1-akun-admin.php`, `2-produk.php`, `3-be
 | Form Request | `app/Http/Requests/ProductRequest.php` |
 | Model | `app/Models`: User, Category, Product, Cart, Order, OrderItem, Payment |
 | View | `resources/views` — layout `app`, `guest`, `public`; komponen `x-badge`, `x-stat-card`, `x-product-card`, `x-password-input`, `x-orders-table` |
-| Aset | `public/vendor/bootstrap`, `public/vendor/jquery`, `public/css/agritani.css`, `public/js/agritani.js` |
-| Konfigurasi | `config/agritani.php` (ongkir, batas hari selesai otomatis) |
+| Aset | `public/vendor/bootstrap`, `public/vendor/jquery`, `public/css/tanimart.css`, `public/js/tanimart.js` |
+| Konfigurasi | `config/tanimart.php` (ongkir, batas hari selesai otomatis) |
 | Perintah terjadwal | `app/Console/Commands/AutoCompleteOrders.php`, jadwal di `routes/console.php` |
 | Seeder | `UserSeeder`, `CategorySeeder`, `ProductSeeder`, `DemoSeeder` |
 
@@ -417,7 +417,7 @@ Tidak memakai Node.js / npm / Vite. Bootstrap dan jQuery disimpan lokal sehingga
 
 ## 13. Pemetaan materi perkuliahan
 
-| Materi | Implementasi di AgriTani |
+| Materi | Implementasi di Tanimart |
 | --- | --- |
 | Router & Middleware | Route per modul; `RoleMiddleware` (`role:admin`, `role:petani`, `role:pembeli`), `auth`, `guest`, `throttle` |
 | Migration & Seeder | 7 migration sesuai ERD + migration rekening; 4 seeder akun, kategori, produk, pesanan contoh |
@@ -450,7 +450,7 @@ PHPUnit, **103 tes / 458 assertion, semua lolos**, memakai SQLite in-memory. Per
 | `[Nama Anggota 4]` `[NIM]` | Pesanan Masuk + laporan petani | `4-pesanan-masuk.php` | `payments` | Konfirmasi pesanan & pembayaran, pengiriman, trait `BuildsSalesReport` |
 
 ## 16. Daftar screenshot
-Folder: `Screenshot AgriTani` (diambil dari aplikasi yang berjalan, 17 November 2026). Gambar hanya memuat bagian atas halaman.
+Folder: `Screenshot Tanimart` (diambil dari aplikasi yang berjalan, 17 November 2026). Gambar hanya memuat bagian atas halaman.
 
 | File | Halaman | Isi yang terlihat |
 | --- | --- | --- |
@@ -507,4 +507,4 @@ php artisan storage:link
 php artisan serve
 ```
 
-Akun uji (password `password`): `admin@agritani.test`, `petani@agritani.test`, `petani2@agritani.test`, `pembeli@agritani.test`.
+Akun uji (password `password`): `admin@tanimart.test`, `petani@tanimart.test`, `petani2@tanimart.test`, `pembeli@tanimart.test`.

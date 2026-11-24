@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', $product->name.' — AgriTani')
+@section('title', $product->name.' — Tanimart')
 
 @section('content')
     <a href="{{ route('home') }}" class="small text-secondary">← Kembali ke katalog</a>

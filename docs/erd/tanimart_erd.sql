@@ -1,5 +1,5 @@
 -- ============================================================
--- AgriTani - Struktur database untuk ERD
+-- Tanimart - Struktur database untuk ERD
 -- Diambil dari database MySQL hasil `php artisan migrate`
 -- (7 tabel utama; tabel bawaan Laravel seperti sessions, cache,
 --  jobs, password_reset_tokens tidak disertakan).
@@ -11,8 +11,8 @@
 --  - dbdiagram.io / drawSQL: Import > MySQL
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS agritani_erd;
-USE agritani_erd;
+CREATE DATABASE IF NOT EXISTS tanimart_erd;
+USE tanimart_erd;
 
 CREATE TABLE `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,

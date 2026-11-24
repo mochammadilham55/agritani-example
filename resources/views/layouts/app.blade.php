@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     @include('layouts.partials.head')
-    <title>@yield('title', 'Dashboard') — AgriTani</title>
+    <title>@yield('title', 'Dashboard') — Tanimart</title>
 </head>
 <body>
     <div class="d-md-flex min-vh-100">
@@ -10,7 +10,7 @@
         <aside class="sidebar offcanvas-md offcanvas-start" tabindex="-1" id="sidebar" aria-label="Menu utama">
             <div class="sidebar-panel bg-brand-dark h-100 w-100">
                 <div class="d-flex align-items-center justify-content-between px-4 pt-4 pb-2">
-                    <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">🌱 AgriTani</a>
+                    <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">🌱 Tanimart</a>
                     <button type="button" class="btn-close btn-close-white d-md-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Tutup menu"></button>
                 </div>
                 @include('layouts.partials.sidebar')

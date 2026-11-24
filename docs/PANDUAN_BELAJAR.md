@@ -1,4 +1,4 @@
-# Panduan Belajar per Anggota — AgriTani
+# Panduan Belajar per Anggota — Tanimart
 
 Setiap anggota cukup menguasai modulnya sendiri sampai bisa menjelaskan **alur dari klik di browser sampai data tersimpan**. Baca file sesuai urutan nomor (route → controller → model → view → test). Angka setelah titik dua adalah nomor baris di file, misalnya `AuthController.php:50`.
 
@@ -16,7 +16,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 - `routes/web.php` — route login/dashboard dan pemanggilan `routes/modules/*.php`
 - `resources/views/layouts/app.blade.php`, `public.blade.php`, `guest.blade.php`, `layouts/partials/sidebar.blade.php` — layout Blade (`@extends`, `@section`, `@yield`)
 - `resources/views/components/badge.blade.php` — komponen Blade (`<x-badge>`)
-- `public/js/agritani.js` — semua kode jQuery (tiap anggota punya bagiannya, lihat di bawah)
+- `public/js/tanimart.js` — semua kode jQuery (tiap anggota punya bagiannya, lihat di bawah)
 
 ---
 
@@ -39,7 +39,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 10 | `app/Http/Controllers/Admin/OrderController.php` | `index():11`, `show():31` semua pesanan |
 | 11 | `app/Http/Controllers/Admin/ReportController.php:14` | Memanggil trait `BuildsSalesReport` tanpa `$farmerId` (semua toko) |
 | 12 | View: `auth/login`, `auth/register`, `auth/forgot-password`, `auth/reset-password`, `profile/edit`, `admin/dashboard`, `admin/farmers/index`, `admin/orders/*`, `admin/reports/index` | `@csrf`, `@error`, `old()`, `@if ($user->isPetani())` untuk bagian rekening |
-| 13 | `components/password-input.blade.php` + `agritani.js` bagian `[data-toggle-password]` dan `#bank-fields` | jQuery: tombol Lihat password, isian rekening muncul saat memilih Petani |
+| 13 | `components/password-input.blade.php` + `tanimart.js` bagian `[data-toggle-password]` dan `#bank-fields` | jQuery: tombol Lihat password, isian rekening muncul saat memilih Petani |
 | 14 | `database/seeders/UserSeeder.php` | Akun uji dan rekening contoh |
 | 15 | Tes: `AuthTest`, `LupaPasswordTest`, `ResetOlehAdminTest`, `ProfilTest`, `KelolaPetaniTest`, `PesananAdminTest`, `LaporanPenjualanTest` (bagian admin) | |
 
@@ -65,7 +65,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 6 | `app/Http/Controllers/Petani/ProductController.php` | `index():16`, `store():38`, `update():63` (simpan & hapus foto lama), `toggle():82`, `uniqueSlug():100`, `authorizeOwner():112` |
 | 7 | `app/Http/Controllers/Admin/CategoryController.php` | CRUD kategori; `destroy():57` menolak hapus jika masih dipakai produk |
 | 8 | View: `catalog/index`, `catalog/show`, `petani/products/index`, `petani/products/form`, `admin/categories/*`, `components/product-card` | `@foreach`, `@forelse`, komponen `<x-product-card>`, `enctype="multipart/form-data"` |
-| 9 | `agritani.js` bagian `input[type=file][data-preview]` | jQuery + `FileReader` untuk preview foto |
+| 9 | `tanimart.js` bagian `input[type=file][data-preview]` | jQuery + `FileReader` untuk preview foto |
 | 10 | `database/seeders/CategorySeeder.php`, `ProductSeeder.php` | Data contoh |
 | 11 | Tes: `ProdukPetaniTest`, `KategoriTest` | |
 
@@ -86,13 +86,13 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 1 | `routes/modules/3-belanja.php` | Grup `auth` + `role:pembeli`, route keranjang, checkout, pesanan (`PATCH /batal`, `/selesai`, `POST /bukti`) |
 | 2 | `database/migrations/..._000003_create_orders_table.php`, `..._000004_create_order_items_table.php`, `..._000006_create_carts_table.php` | `unique(['user_id','product_id'])` di keranjang, kolom status pesanan |
 | 3 | `app/Models/Cart.php`, `Order.php`, `OrderItem.php` | `Order`: konstanta status, `buyer():38`, `items():43`, `payment():48`, `scopeForFarmer():59`, `grandTotal():65`, `markCompleted()` (selesai + COD dikonfirmasi, dipakai pembeli dan selesai otomatis); `Cart::getSubtotalAttribute():27` (accessor) |
-| 4 | `config/agritani.php` | Ongkir dari `.env` |
+| 4 | `config/tanimart.php` | Ongkir dari `.env` |
 | 5 | `app/Http/Controllers/Pembeli/CartController.php` | `store():23` (tambah/menjumlah item, cek stok), `update():43`, `destroy():55` |
 | 6 | `app/Http/Controllers/Pembeli/CheckoutController.php` | `create():17` (kelompok per petani, total), `store():37` (validasi + `DB::transaction`), `placeOrders():64` (`lockForUpdate`, pecah per petani, harga dibekukan, kurangi stok, buat `Payment`) |
 | 7 | `app/Http/Controllers/Pembeli/OrderController.php` | `index():15`, `show():27`, `uploadProof():36`, `cancel():69` (stok kembali), `complete():88` (COD → pembayaran otomatis dikonfirmasi), `authorizeOwner():101` |
 | 8 | `app/Http/Controllers/Pembeli/DashboardController.php:11` | Ringkasan pembeli |
 | 9 | View: `pembeli/cart`, `pembeli/checkout` (kotak `#transfer-info` berisi rekening petani), `pembeli/orders/index`, `pembeli/orders/show` (timeline, rekening tujuan, unggah bukti), `pembeli/dashboard` | |
-| 10 | `agritani.js` bagian `#transfer-info` | jQuery: rekening hanya tampil jika metode Transfer dipilih |
+| 10 | `tanimart.js` bagian `#transfer-info` | jQuery: rekening hanya tampil jika metode Transfer dipilih |
 | 11 | Tes: `KatalogKeranjangTest`, `CheckoutPesananTest`, `BuktiBayarTest` | |
 
 **Pertanyaan latihan**
@@ -119,7 +119,7 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 8 | `app/Http/Controllers/Concerns/BuildsSalesReport.php` | `salesReport():18` (validasi filter, `with()` eager loading, `when($farmerId)`, ringkasan, produk terlaris); `salesCsv():82` (`streamDownload`, pemisah `;`) |
 | 9 | `app/Http/Controllers/Petani/ReportController.php:14` | `?export=csv` → CSV, selain itu view |
 | 10 | View: `petani/dashboard`, `petani/orders/*`, `petani/payments/index`, `petani/shipments/index`, `petani/reports/index`, `reports/_sales`, `components/stat-card` | `@include` partial laporan yang dipakai petani & admin |
-| 11 | `agritani.js` bagian `data-filter-table` dan `[data-print]`; `agritani.css` bagian `@media print` | Cari tabel tanpa reload, cetak laporan |
+| 11 | `tanimart.js` bagian `data-filter-table` dan `[data-print]`; `tanimart.css` bagian `@media print` | Cari tabel tanpa reload, cetak laporan |
 | 12 | `app/Console/Commands/AutoCompleteOrders.php` + `routes/console.php` | Perintah artisan `orders:auto-complete` dan jadwal tiap jam (`Schedule::command(...)->hourly()`); scope `Order::readyToAutoComplete()` |
 | 13 | `database/seeders/DemoSeeder.php` | Pesanan contoh |
 | 14 | Tes: `PesananPetaniTest`, `PembayaranTest`, `PengirimanTest`, `SelesaiOtomatisTest`, `DashboardTest`, `LaporanPenjualanTest` | |

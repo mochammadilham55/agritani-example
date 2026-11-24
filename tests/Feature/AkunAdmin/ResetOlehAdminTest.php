@@ -33,7 +33,7 @@ class ResetOlehAdminTest extends TestCase
 
     public function test_whatsapp_button_uses_configured_number(): void
     {
-        config(['agritani.admin_whatsapp' => '6287800000000']);
+        config(['tanimart.admin_whatsapp' => '6287800000000']);
 
         $this->get('/lupa-password')->assertOk()
             ->assertSee('Hubungi Admin via WhatsApp')
@@ -44,10 +44,10 @@ class ResetOlehAdminTest extends TestCase
 
     public function test_whatsapp_button_hidden_without_number(): void
     {
-        config(['agritani.admin_whatsapp' => '']);
+        config(['tanimart.admin_whatsapp' => '']);
 
         $this->get('/lupa-password')->assertOk()->assertDontSee('wa.me', false)
-            ->assertSee('Silakan hubungi admin AgriTani');
+            ->assertSee('Silakan hubungi admin Tanimart');
         $this->get('/login')->assertOk()->assertDontSee('wa.me', false);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Skrip jQuery AgriTani (dimuat setelah jquery.min.js di semua layout).
+ * Skrip jQuery Tanimart (dimuat setelah jquery.min.js di semua layout).
  *  1. Tombol "Lihat" password          → [data-toggle-password]
  *  2. Preview foto sebelum diunggah    → input[type=file][data-preview="#id-img"]
  *  3. Pencarian langsung pada tabel    → input[data-filter-table="#id-tabel"]
@@ -78,7 +78,7 @@ $(function () {
     if (!$wa.length) return;
     var $email = $($wa.data('wa-email-input'));
     function sync() {
-        var text = 'Halo Admin AgriTani, saya lupa password akun dengan email: ' + ($email.val() || '');
+        var text = 'Halo Admin Tanimart, saya lupa password akun dengan email: ' + ($email.val() || '');
         $wa.attr('href', 'https://wa.me/' + $wa.data('wa-number') + '?text=' + encodeURIComponent(text));
     }
     $email.on('input', sync);

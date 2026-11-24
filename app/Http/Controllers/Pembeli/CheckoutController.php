@@ -22,7 +22,7 @@ class CheckoutController extends Controller
             return redirect()->route('pembeli.cart.index')->with('error', 'Keranjang Anda kosong.');
         }
 
-        $shipping = config('agritani.shipping_cost');
+        $shipping = config('tanimart.shipping_cost');
         $groups = $items->groupBy(fn ($i) => $i->product->user_id);
         $subtotal = $items->sum(fn ($i) => $i->product->price * $i->quantity);
 
@@ -78,7 +78,7 @@ class CheckoutController extends Controller
             }
         }
 
-        $shipping = config('agritani.shipping_cost');
+        $shipping = config('tanimart.shipping_cost');
         $orders = collect();
 
         foreach ($carts->groupBy(fn ($c) => $products[$c->product_id]->user_id) as $farmerId => $lines) {

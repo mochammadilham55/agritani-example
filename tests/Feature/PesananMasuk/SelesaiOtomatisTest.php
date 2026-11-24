@@ -27,7 +27,7 @@ class SelesaiOtomatisTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['agritani.auto_complete_days' => 7]);
+        config(['tanimart.auto_complete_days' => 7]);
         $cat = Category::create(['name' => 'Sayur', 'slug' => 'sayur']);
         $this->farmer = User::create(['name' => 'Petani', 'email' => 'f@t.test', 'password' => 'password', 'role' => 'petani', 'is_active' => true]);
         $this->buyer = User::create(['name' => 'Pembeli', 'email' => 'b@t.test', 'password' => 'password', 'role' => 'pembeli', 'is_active' => true]);
@@ -95,7 +95,7 @@ class SelesaiOtomatisTest extends TestCase
 
     public function test_limit_follows_config(): void
     {
-        config(['agritani.auto_complete_days' => 3]);
+        config(['tanimart.auto_complete_days' => 3]);
         $order = $this->order('dikirim', 4);
 
         $this->artisan('orders:auto-complete');

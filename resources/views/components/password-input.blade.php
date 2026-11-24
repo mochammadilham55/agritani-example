@@ -1,6 +1,6 @@
 {{--
     Input password dengan tombol kecil "Lihat" untuk menampilkan/menyembunyikan isinya,
-    supaya pengguna bisa memeriksa salah ketik. Perilaku tombol ada di public/js/agritani.js (jQuery).
+    supaya pengguna bisa memeriksa salah ketik. Perilaku tombol ada di public/js/tanimart.js (jQuery).
     Atribut lain (id, name, required, ...) diteruskan ke <input>.
     Pemakaian: <x-password-input id="password" name="password" required />
 --}}

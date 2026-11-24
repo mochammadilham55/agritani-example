@@ -24,7 +24,7 @@ class DemoSeeder extends Seeder
 
         $this->call([UserSeeder::class, CategorySeeder::class, ProductSeeder::class]);
 
-        $buyer = User::where('email', 'pembeli@agritani.test')->firstOrFail();
+        $buyer = User::where('email', 'pembeli@tanimart.test')->firstOrFail();
 
         // [status, metode, status bayar, [[slug, qty], ...], hari lalu]
         // Satu pesanan = satu petani (produk berselang-seling per petani lihat ProductSeeder).
@@ -50,7 +50,7 @@ class DemoSeeder extends Seeder
                     'total_price' => $subtotal,
                     'status' => $status,
                     'shipping_address' => 'Jl. Contoh No. 1, Indonesia',
-                    'shipping_cost' => config('agritani.shipping_cost'),
+                    'shipping_cost' => config('tanimart.shipping_cost'),
                 ]);
                 $order->forceFill(['created_at' => now()->subDays($daysAgo), 'updated_at' => now()->subDays($daysAgo)])->save();
 

@@ -10,10 +10,10 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            ['Admin AgriTani', 'admin@agritani.test', 'admin', '081200000001'],
-            ['Pak Slamet (Petani)', 'petani@agritani.test', 'petani', '081200000002'],
-            ['Bu Sari (Petani)', 'petani2@agritani.test', 'petani', '081200000003'],
-            ['Budi Pembeli', 'pembeli@agritani.test', 'pembeli', '081200000004'],
+            ['Admin Tanimart', 'admin@tanimart.test', 'admin', '081200000001'],
+            ['Pak Slamet (Petani)', 'petani@tanimart.test', 'petani', '081200000002'],
+            ['Bu Sari (Petani)', 'petani2@tanimart.test', 'petani', '081200000003'],
+            ['Budi Pembeli', 'pembeli@tanimart.test', 'pembeli', '081200000004'],
         ];
 
         foreach ($users as [$name, $email, $role, $phone]) {

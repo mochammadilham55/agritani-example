@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Checkout — AgriTani')
+@section('title', 'Checkout — Tanimart')
 
 @section('content')
     <h1 class="fs-2 fw-bold text-brand-dark mb-4">Checkout</h1>

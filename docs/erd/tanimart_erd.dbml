@@ -1,4 +1,4 @@
-// AgriTani - ERD untuk https://dbdiagram.io (tempel di editor kiri)
+// Tanimart - ERD untuk https://dbdiagram.io (tempel di editor kiri)
 
 Table users {
   id bigint [pk, increment]

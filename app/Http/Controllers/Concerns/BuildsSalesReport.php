@@ -88,7 +88,7 @@ trait BuildsSalesReport
 
             $write = fn (array $cells) => fputcsv($out, $cells, ';');
 
-            $write(['Laporan Penjualan AgriTani']);
+            $write(['Laporan Penjualan Tanimart']);
             $write(['Periode', $report['from']->format('d/m/Y').' - '.$report['to']->format('d/m/Y')]);
             $write([]);
             $write(['No. Pesanan', 'Tanggal', 'Pembeli', 'Produk', 'Status', 'Total (Rp)']);

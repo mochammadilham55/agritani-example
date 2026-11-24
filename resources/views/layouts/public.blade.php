@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     @include('layouts.partials.head')
-    <title>@yield('title', 'AgriTani — Hasil Tani Langsung dari Petani')</title>
+    <title>@yield('title', 'Tanimart — Hasil Tani Langsung dari Petani')</title>
 </head>
 <body class="d-flex flex-column min-vh-100">
     @php
@@ -11,7 +11,7 @@
     @endphp
     <header class="sticky-top bg-brand-dark text-white" style="z-index: 1020;">
         <div class="container d-flex align-items-center gap-3 py-2">
-            <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">🌱 AgriTani</a>
+            <a href="{{ route('home') }}" class="fs-4 fw-bold text-white text-decoration-none">🌱 Tanimart</a>
             <form action="{{ route('home') }}" method="GET" class="d-none d-sm-block flex-grow-1" style="max-width: 28rem;">
                 <input type="search" name="q" value="{{ request('q') }}" placeholder="Cari hasil tani…" class="form-control form-control-sm" aria-label="Cari produk">
             </form>
@@ -37,7 +37,7 @@
         @yield('content')
     </main>
 
-    <footer class="border-top py-3 text-center small text-secondary">© {{ date('Y') }} AgriTani — Marketplace hasil pertanian</footer>
+    <footer class="border-top py-3 text-center small text-secondary">© {{ date('Y') }} Tanimart — Marketplace hasil pertanian</footer>
 
     @include('layouts.partials.scripts')
 </body>

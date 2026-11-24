@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Daftar — AgriTani')
+@section('title', 'Daftar — Tanimart')
 
 @section('content')
     <h1 class="h4 fw-bold text-brand-dark">Buat Akun</h1>

@@ -1,4 +1,4 @@
-# AgriTani
+# Tanimart
 
 Marketplace hasil pertanian sederhana berbasis **Laravel 12** dan **MySQL**. Petani menjual hasil panen, pembeli memesan dan membayar, admin mengawasi. Proyek akhir kelompok (4 anggota).
 
@@ -46,7 +46,7 @@ Aturan yang perlu dijelaskan saat presentasi:
 - Satu keranjang berisi produk dari beberapa petani akan **dipecah menjadi satu pesanan per petani**.
 - Stok dikurangi saat checkout. Kalau stok kurang, seluruh checkout dibatalkan (satu transaksi database).
 - Transfer harus dikonfirmasi pembayarannya dulu sebelum pesanan bisa diproses. COD bisa langsung diproses.
-- Ongkos kirim tetap per pesanan, diatur di `.env` (`AGRITANI_SHIPPING_COST`).
+- Ongkos kirim tetap per pesanan, diatur di `.env` (`TANIMART_SHIPPING_COST`).
 
 ## Fitur
 **Semua peran:** login, register, **lupa password** (tautan reset lewat email), dan **ubah password** di halaman profil.
@@ -64,7 +64,7 @@ flowchart LR
     Petani([Petani])
     Admin([Admin])
 
-    subgraph AgriTani
+    subgraph Tanimart
         direction TB
         UC1(Login / Register)
         UC2(Lupa & ubah password)
@@ -95,7 +95,7 @@ flowchart LR
 | Controller, Request, Response | `ProductRequest` (Form Request), controller per peran, redirect + flash message, respons CSV (`BuildsSalesReport`) |
 | Blade | `layouts/app`, `guest`, `public`, komponen `x-badge`, `x-stat-card`, `x-product-card`, `x-password-input` |
 | Validation | `ProductRequest`, `$request->validate()` di controller lain, pesan error berbahasa Indonesia |
-| Bootstrap & jQuery | Bootstrap 5 (`public/vendor/bootstrap`), jQuery 3.7 (`public/vendor/jquery`), skrip di `public/js/agritani.js` (tombol lihat password, preview foto, cari tabel langsung, cetak) |
+| Bootstrap & jQuery | Bootstrap 5 (`public/vendor/bootstrap`), jQuery 3.7 (`public/vendor/jquery`), skrip di `public/js/tanimart.js` (tombol lihat password, preview foto, cari tabel langsung, cetak) |
 | CRUD & Laporan | CRUD produk dan kategori; laporan penjualan petani (`/petani/laporan`) dan admin (`/admin/laporan`) dengan filter, ringkasan, CSV, dan cetak |
 
 ## Struktur database (6 tabel inti)
@@ -157,7 +157,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-4. Buat database kosong di MySQL bernama `agritani` (HeidiSQL/phpMyAdmin, atau `mysql -u root -e "CREATE DATABASE agritani"`).
+4. Buat database kosong di MySQL bernama `tanimart` (HeidiSQL/phpMyAdmin, atau `mysql -u root -e "CREATE DATABASE tanimart"`).
    `.env.example` sudah memakai MySQL dengan pengaturan di bawah. Cocokkan dengan `.env` Anda
    (nama database di `.env` harus sama dengan yang dibuat, kalau tidak muncul error `Unknown database`):
 
@@ -165,7 +165,7 @@ php artisan key:generate
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=agritani
+DB_DATABASE=tanimart
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -194,10 +194,10 @@ Semua akun memakai password `password`.
 
 | Peran | Email |
 |---|---|
-| Admin | admin@agritani.test |
-| Petani | petani@agritani.test |
-| Petani 2 | petani2@agritani.test |
-| Pembeli | pembeli@agritani.test |
+| Admin | admin@tanimart.test |
+| Petani | petani@tanimart.test |
+| Petani 2 | petani2@tanimart.test |
+| Pembeli | pembeli@tanimart.test |
 
 Hanya untuk pengembangan lokal. Ganti atau hapus akun ini sebelum aplikasi dipasang di server sungguhan.
 
@@ -213,7 +213,7 @@ Seeder ini aman diulang dan dilewati jika pesanan sudah ada.
 ## Lupa password saat demo
 Lupa password ditangani lewat admin (tidak lewat email):
 
-1. Isi `AGRITANI_ADMIN_WHATSAPP` di `.env` (format `628xxxxxxxxxx`). Jika kosong, halaman hanya menampilkan tulisan "Silakan hubungi admin".
+1. Isi `TANIMART_ADMIN_WHATSAPP` di `.env` (format `628xxxxxxxxxx`). Jika kosong, halaman hanya menampilkan tulisan "Silakan hubungi admin".
 2. Di halaman login klik **Lupa password?**, isi email akun, lalu klik **Hubungi Admin via WhatsApp**. WhatsApp terbuka dengan pesan berisi email tersebut.
 3. Admin login, buka **Kelola Pengguna**, cocokkan no. HP pengirim, lalu klik **Reset Password**. Password sementara tampil sekali.
 4. Pengguna login dengan password sementara dan langsung diarahkan ke Profil untuk mengganti password.
@@ -241,12 +241,12 @@ Folder test: `AkunAdmin`, `Produk`, `Belanja`, `PesananMasuk`, `Laporan` (lapora
 ## Konfigurasi
 | Variabel `.env` | Fungsi | Bawaan |
 |---|---|---|
-| `AGRITANI_SHIPPING_COST` | Ongkos kirim tetap per pesanan (Rp) | 10000 |
-| `AGRITANI_ADMIN_WHATSAPP` | Nomor WhatsApp admin untuk tombol "Hubungi Admin" di halaman login dan lupa password (format `628xxxxxxxxxx`). Kosong = tombol disembunyikan. Isi hanya di `.env` lokal | kosong |
-| `AGRITANI_AUTO_COMPLETE_DAYS` | Pesanan berstatus Dikirim otomatis Selesai setelah sekian hari jika pembeli tidak menekan "Pesanan Diterima" | 7 |
+| `TANIMART_SHIPPING_COST` | Ongkos kirim tetap per pesanan (Rp) | 10000 |
+| `TANIMART_ADMIN_WHATSAPP` | Nomor WhatsApp admin untuk tombol "Hubungi Admin" di halaman login dan lupa password (format `628xxxxxxxxxx`). Kosong = tombol disembunyikan. Isi hanya di `.env` lokal | kosong |
+| `TANIMART_AUTO_COMPLETE_DAYS` | Pesanan berstatus Dikirim otomatis Selesai setelah sekian hari jika pembeli tidak menekan "Pesanan Diterima" | 7 |
 
 ### Selesai otomatis (scheduler)
-Perintah `php artisan orders:auto-complete` menandai selesai pesanan yang sudah dikirim lebih dari `AGRITANI_AUTO_COMPLETE_DAYS` hari. Perintah ini dijadwalkan setiap jam di `routes/console.php`, tetapi jadwal hanya berjalan jika scheduler aktif:
+Perintah `php artisan orders:auto-complete` menandai selesai pesanan yang sudah dikirim lebih dari `TANIMART_AUTO_COMPLETE_DAYS` hari. Perintah ini dijadwalkan setiap jam di `routes/console.php`, tetapi jadwal hanya berjalan jika scheduler aktif:
 
 - Saat pengembangan/demo: buka terminal kedua dan jalankan `php artisan schedule:work`, atau jalankan `php artisan orders:auto-complete` secara manual.
 - Di server: tambahkan cron `* * * * * php /path/ke/proyek/artisan schedule:run`.

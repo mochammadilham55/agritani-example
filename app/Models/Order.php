@@ -94,7 +94,7 @@ class Order extends Model
     public function autoCompleteAt(): ?Carbon
     {
         return $this->status === self::STATUS_DIKIRIM && $this->shipped_at
-            ? $this->shipped_at->copy()->addDays(config('agritani.auto_complete_days'))
+            ? $this->shipped_at->copy()->addDays(config('tanimart.auto_complete_days'))
             : null;
     }
 
@@ -103,6 +103,6 @@ class Order extends Model
     {
         return $query->where('status', self::STATUS_DIKIRIM)
             ->whereNotNull('shipped_at')
-            ->where('shipped_at', '<=', now()->subDays(config('agritani.auto_complete_days')));
+            ->where('shipped_at', '<=', now()->subDays(config('tanimart.auto_complete_days')));
     }
 }
