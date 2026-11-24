@@ -45,3 +45,9 @@ php artisan boost:install
 
 Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
 </laravel-boost-guidelines>
+
+# Tanimart: pembagian anggota
+
+Repo ini tugas akhir kelompok 4 anggota. Peta kepemilikan file per anggota, aturan status pesanan, titik singgung antar modul, dan petunjuk kerja untuk agent AI ada di `docs/PRD_PEMBAGIAN_ANGGOTA.md`. Baca file itu sebelum menjelaskan atau mengubah kode, dan selalu sebutkan anggota pemilik setiap file yang diubah.
+
+@docs/PRD_PEMBAGIAN_ANGGOTA.md

@@ -1,5 +1,7 @@
 # Pembagian Tugas Tanimart (4 Anggota)
 
+> Peta lengkap kepemilikan file (termasuk fitur yang ditambahkan belakangan) ada di `docs/PRD_PEMBAGIAN_ANGGOTA.md`.
+
 Setiap anggota punya file route sendiri di `routes/modules/` dan folder test sendiri di `tests/Feature/`.
 Jalankan test modul sendiri: `php artisan test tests/Feature/<Folder>`.
 
