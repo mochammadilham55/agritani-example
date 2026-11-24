@@ -41,7 +41,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-5 text-center text-secondary">Tidak ada petani.</td></tr>
+                        <tr><td colspan="6" class="py-5 text-center text-secondary">{{ request()->hasAny(['q', 'status']) ? 'Tidak ada petani yang cocok dengan pencarian atau status ini.' : 'Belum ada petani yang mendaftar.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

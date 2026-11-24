@@ -72,7 +72,7 @@
                     <button class="btn btn-outline-danger w-100 fw-semibold">Tolak Pesanan</button>
                 </form>
             @elseif ($order->status === 'diproses')
-                <a href="{{ route('petani.shipments.index') }}" class="btn btn-primary w-100 fw-semibold">Isi Resi Pengiriman →</a>
+                <a href="{{ route('petani.shipments.index') }}" class="btn btn-primary w-100 fw-semibold">Isi Resi Pengiriman</a>
             @endif
         </aside>
     </div>

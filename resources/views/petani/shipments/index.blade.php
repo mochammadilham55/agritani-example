@@ -31,7 +31,7 @@
                 </div>
             </section>
         @empty
-            <div class="card text-center text-secondary py-5" style="border-style: dashed;"><div class="card-body">Tidak ada pesanan yang perlu dikirim.</div></div>
+            <div class="card text-center text-secondary py-5" style="border-style: dashed;"><div class="card-body">Tidak ada pesanan yang perlu dikirim. Pesanan muncul di sini setelah Anda mengonfirmasinya di Pesanan Masuk.</div></div>
         @endforelse
     </div>
     <div class="mt-4">{{ $orders->links() }}</div>

@@ -24,7 +24,7 @@
                         <td><x-badge :status="$order->status" /></td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="py-4 text-center text-secondary">Belum ada pesanan.</td></tr>
+                    <tr><td colspan="4" class="py-4 text-center text-secondary">Belum ada pesanan. Pesanan terbaru akan muncul di sini.</td></tr>
                 @endforelse
             </tbody>
         </table>

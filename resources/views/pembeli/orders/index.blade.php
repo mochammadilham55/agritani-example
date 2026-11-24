@@ -32,7 +32,13 @@
                 </div>
             </a>
         @empty
-            <div class="card text-center text-secondary py-5" style="border-style: dashed;"><div class="card-body">Belum ada pesanan.</div></div>
+            <div class="card text-center text-secondary py-5" style="border-style: dashed;"><div class="card-body">
+                @if (request('status'))
+                    Tidak ada pesanan berstatus {{ request('status') }}. <a href="{{ route('pembeli.orders.index') }}">Lihat semua pesanan</a>
+                @else
+                    Anda belum pernah memesan. <a href="{{ route('home') }}">Mulai belanja di katalog</a>
+                @endif
+            </div></div>
         @endforelse
     </div>
 

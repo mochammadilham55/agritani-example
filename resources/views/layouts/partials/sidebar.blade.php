@@ -21,8 +21,10 @@
         ],
         'admin' => [
             ['Dashboard', 'admin.dashboard'],
+            ['section' => 'Akun'],
             ['Daftar Petani', 'admin.farmers.index'],
             ['Kelola Pengguna', 'admin.users.index'],
+            ['section' => 'Toko'],
             ['Kelola Kategori', 'admin.categories.index'],
             ['Daftar Pesanan', 'admin.orders.index'],
             ['Laporan Penjualan', 'admin.reports.index'],
@@ -45,7 +47,7 @@
                     : request()->routeIs($route, \Illuminate\Support\Str::beforeLast($route, '.').'.*'));
             @endphp
             @if ($exists)
-                <a href="{{ route($route) }}" @class(['nav-link d-flex align-items-center gap-3', 'active' => $active])>
+                <a href="{{ route($route) }}" @class(['nav-link d-flex align-items-center gap-3', 'active' => $active]) @if ($active) aria-current="page" @endif>
                     {{ $label }}
                 </a>
             @else

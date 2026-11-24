@@ -50,7 +50,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="3" class="py-5 text-center text-secondary">Belum ada kategori.</td></tr>
+                                <tr><td colspan="3" class="py-5 text-center text-secondary">Belum ada kategori. Tambahkan kategori pertama lewat form di sebelah kiri.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

@@ -46,7 +46,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-5 text-center text-secondary">Belum ada pembayaran.</td></tr>
+                        <tr><td colspan="6" class="py-5 text-center text-secondary">{{ request('status') ? 'Tidak ada pembayaran berstatus '.request('status').'.' : 'Belum ada pembayaran. Pembayaran muncul setelah pembeli checkout produk Anda.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

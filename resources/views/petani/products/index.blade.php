@@ -29,7 +29,7 @@
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="rounded bg-role-bg d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0" style="width: 2.5rem; height: 2.5rem;">
-                                        @if ($p->image)<img src="{{ asset('storage/'.$p->image) }}" alt="" class="w-100 h-100 object-fit-cover">@endif
+                                        @if ($p->image)<img src="{{ asset('storage/'.$p->image) }}" alt="" width="40" height="40" class="w-100 h-100 object-fit-cover">@else<span class="no-photo-sm">Tanpa foto</span>@endif
                                     </div>
                                     <div><p class="fw-medium mb-0">{{ $p->name }}</p><p class="small text-secondary mb-0">{{ $p->category?->name }}</p></div>
                                 </div>
@@ -52,7 +52,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="py-5 text-center text-secondary">Belum ada produk.</td></tr>
+                        <tr><td colspan="5" class="py-5 text-center text-secondary">@if (request()->hasAny(['q', 'status']))Tidak ada produk yang cocok dengan pencarian atau status ini.@else Belum ada produk. <a href="{{ route('petani.products.create') }}">Tambah produk pertama</a>@endif</td></tr>
                     @endforelse
                 </tbody>
             </table>

@@ -69,7 +69,7 @@
                                 <td class="text-end">Rp {{ number_format($row->amount, 0, ',', '.') }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="py-5 text-center text-secondary">Tidak ada pesanan pada periode ini.</td></tr>
+                            <tr><td colspan="4" class="py-5 text-center text-secondary">Tidak ada pesanan pada periode ini. Ubah rentang tanggal atau status lalu tekan Tampilkan.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -87,7 +87,7 @@
                         <span>Rp {{ number_format($p->total, 0, ',', '.') }}</span>
                     </li>
                 @empty
-                    <li class="list-group-item text-center text-secondary py-4">Belum ada penjualan selesai.</li>
+                    <li class="list-group-item text-center text-secondary py-4">Produk terlaris muncul setelah ada pesanan selesai pada periode ini.</li>
                 @endforelse
             </ul>
         </div>

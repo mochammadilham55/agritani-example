@@ -32,7 +32,7 @@
                             <td class="text-end"><a href="{{ route('admin.orders.show', $o) }}" class="btn btn-outline-secondary btn-sm">Detail</a></td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-5 text-center text-secondary">Tidak ada pesanan.</td></tr>
+                        <tr><td colspan="6" class="py-5 text-center text-secondary">{{ request()->hasAny(['q', 'status']) ? 'Tidak ada pesanan yang cocok dengan pencarian atau status ini.' : 'Belum ada pesanan di AgriTani.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

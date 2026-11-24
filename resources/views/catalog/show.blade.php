@@ -11,7 +11,7 @@
                 @if ($product->image)
                     <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="object-fit-cover w-100 h-100">
                 @else
-                    <div class="d-flex align-items-center justify-content-center" style="font-size: 6rem;" aria-hidden="true"></div>
+                    <div class="d-flex align-items-center justify-content-center no-photo">Petani belum menambahkan foto produk ini</div>
                 @endif
             </div>
         </div>

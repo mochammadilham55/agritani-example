@@ -15,7 +15,7 @@
         <div class="col-lg-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="h6 fw-bold text-brand-dark mb-3">Pesanan 7 Hari Terakhir</h2>
+                    <h2 class="h6 fw-bold text-brand-dark mb-3">Jumlah pesanan per hari, 7 hari terakhir</h2>
                     @php $max = max(1, $chart->max('count')); @endphp
                     <div class="d-flex align-items-end gap-2" style="height: 10rem;" role="img" aria-label="Grafik jumlah pesanan per hari">
                         @foreach ($chart as $bar)

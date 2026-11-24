@@ -1,10 +1,10 @@
 @extends('layouts.public')
 
 @section('content')
-    <section class="rounded-4 bg-brand-dark text-white px-4 px-md-5 py-5 mb-4">
-        <h1 class="fw-bold fs-2">Segar langsung dari petani lokal</h1>
-        <p class="mb-0 mt-2 text-white-50" style="max-width: 36rem;">Belanja sayur, buah, beras, dan rempah berkualitas dengan harga adil untuk petani.</p>
-    </section>
+    <div class="mb-4">
+        <h1 class="fw-bold fs-3 text-brand-dark mb-1">Hasil tani dari petani lokal</h1>
+        <p class="text-secondary mb-0">{{ number_format($products->total(), 0, ',', '.') }} produk tersedia, dijual langsung oleh petaninya.</p>
+    </div>
 
     <form method="GET" action="{{ route('home') }}" class="row g-2 align-items-center mb-4">
         <div class="col-12 col-md">
@@ -34,7 +34,13 @@
     </form>
 
     @if ($products->isEmpty())
-        <div class="card text-center text-secondary py-5" style="border-style: dashed;"><div class="card-body">Produk tidak ditemukan.</div></div>
+        <div class="card text-center text-secondary py-5" style="border-style: dashed;"><div class="card-body">
+            @if (request()->hasAny(['q', 'kategori']))
+                Tidak ada produk yang cocok dengan pencarian atau kategori ini. <a href="{{ route('home') }}">Tampilkan semua produk</a>
+            @else
+                Belum ada produk yang dijual. Produk muncul di sini setelah petani menambahkannya.
+            @endif
+        </div></div>
     @else
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
             @foreach ($products as $product)

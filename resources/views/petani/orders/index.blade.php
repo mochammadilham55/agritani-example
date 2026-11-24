@@ -28,7 +28,7 @@
                             <td class="text-end"><a href="{{ route('petani.orders.show', $o->id) }}" class="btn btn-outline-secondary btn-sm">Detail</a></td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-5 text-center text-secondary">Belum ada pesanan.</td></tr>
+                        <tr><td colspan="6" class="py-5 text-center text-secondary">{{ request('status') ? 'Tidak ada pesanan berstatus '.request('status').'.' : 'Belum ada pesanan masuk. Pesanan muncul di sini setelah pembeli checkout produk Anda.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
