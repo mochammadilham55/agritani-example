@@ -5,7 +5,7 @@
 | ANGGOTA 1 — Akun & Admin
 |--------------------------------------------------------------------------
 | Profil pengguna, dashboard admin, kelola petani (aktif/nonaktif),
-| dan daftar pesanan (hanya lihat) untuk admin.
+| kelola pengguna (reset password oleh admin), dan daftar pesanan (hanya lihat) untuk admin.
 | (Login, register, logout ada di routes/web.php.)
 */
 
@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/petani', [Admin\FarmerController::class, 'index'])->name('farmers.index');
         Route::patch('/petani/{user}/toggle', [Admin\FarmerController::class, 'toggle'])->name('farmers.toggle');
+
+        Route::get('/pengguna', [Admin\UserController::class, 'index'])->name('users.index');
+        Route::patch('/pengguna/{user}/reset-password', [Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
 
         Route::get('/laporan', [Admin\ReportController::class, 'index'])->name('reports.index');
 

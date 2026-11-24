@@ -71,3 +71,27 @@ $(function () {
     $('input[name=method]').on('change', sync);
     sync();
 });
+
+// Tombol "Hubungi Admin via WhatsApp": sisipkan email yang diketik ke pesan otomatis.
+$(function () {
+    var $wa = $('#wa-admin');
+    if (!$wa.length) return;
+    var $email = $($wa.data('wa-email-input'));
+    function sync() {
+        var text = 'Halo Admin AgriTani, saya lupa password akun dengan email: ' + ($email.val() || '');
+        $wa.attr('href', 'https://wa.me/' + $wa.data('wa-number') + '?text=' + encodeURIComponent(text));
+    }
+    $email.on('input', sync);
+    sync();
+});
+
+// Tombol salin (mis. password sementara di Kelola Pengguna).
+$(document).on('click', '[data-copy]', function () {
+    var $btn = $(this);
+    var text = $($btn.data('copy')).text().trim();
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () {
+            $btn.text('Tersalin');
+        });
+    }
+});

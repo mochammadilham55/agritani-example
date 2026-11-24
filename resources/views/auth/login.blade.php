@@ -35,4 +35,9 @@
     <p class="mt-4 mb-0 text-center small text-secondary">
         Belum punya akun? <a href="{{ route('register') }}" class="fw-semibold">Daftar</a>
     </p>
+    @if (config('agritani.admin_whatsapp'))
+        <p class="mt-2 mb-0 text-center small text-secondary">
+            Butuh bantuan? <a href="https://wa.me/{{ config('agritani.admin_whatsapp') }}?text={{ rawurlencode('Halo Admin AgriTani, saya butuh bantuan akun.') }}" target="_blank" rel="noopener" class="fw-semibold">Hubungi admin via WhatsApp</a>
+        </p>
+    @endif
 @endsection

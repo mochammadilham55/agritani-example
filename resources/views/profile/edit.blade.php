@@ -4,6 +4,9 @@
 @section('heading', 'Profil')
 
 @section('content')
+    @if ($user->must_change_password)
+        <div class="alert alert-warning small">Anda memakai password sementara dari admin. Isi <strong>Password saat ini</strong> dengan password sementara tersebut, lalu buat password baru.</div>
+    @endif
     <div class="row g-4" style="max-width: 62rem;">
         <div class="col-lg-6">
             <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="card">

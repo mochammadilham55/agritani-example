@@ -99,6 +99,9 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | F-1.3 | Lupa password | Kirim tautan reset ke email, dibatasi 6 permintaan per menit. Atur ulang password lewat tautan |
 | F-1.4 | Profil | Ubah nama, email, no. HP, alamat, foto. Petani juga mengubah rekening bank (wajib) |
 | F-1.5 | Ubah password | Wajib mengisi password saat ini |
+| F-1.10 | Hubungi admin via WhatsApp | Tombol di halaman lupa password dan login membuka `wa.me/<nomor admin>` dengan pesan otomatis berisi email. Nomor diatur di `.env` (`AGRITANI_ADMIN_WHATSAPP`); kosong = tombol disembunyikan |
+| F-1.11 | Kelola pengguna & reset password oleh admin | Daftar semua pembeli dan petani (cari nama/email/no. HP, filter peran). Tombol Reset Password membuat password sementara (format `Tani-XXXX9999`) yang tampil sekali ke admin. Akun admin tidak bisa direset |
+| F-1.12 | Wajib ganti password sementara | Pengguna dengan password sementara hanya bisa membuka halaman profil dan logout sampai password diganti (middleware `EnsurePasswordChanged`) |
 | F-1.6 | Dashboard admin | Total pengguna, produk aktif, pesanan hari ini, pendapatan, grafik pesanan 7 hari, pesanan terbaru |
 | F-1.7 | Kelola petani | Daftar petani dengan pencarian dan filter status. Tombol aktifkan / tangguhkan |
 | F-1.8 | Semua pesanan | Daftar dan detail seluruh pesanan, pencarian dan filter status |
@@ -245,6 +248,7 @@ stateDiagram-v2
 **Admin**
 1. Login → Dashboard (statistik + grafik 7 hari).
 2. Daftar Petani → cari / filter → Aktifkan atau Tangguhkan.
+3. Kelola Pengguna → cocokkan no. HP pengirim WhatsApp → Reset Password → kirim password sementara.
 3. Kelola Kategori → tambah, edit, hapus.
 4. Daftar Pesanan → cari / filter status → detail pesanan.
 5. Laporan Penjualan → seluruh toko → Unduh CSV / Cetak.
@@ -260,6 +264,7 @@ flowchart LR
     C -- Tidak --> X[Ditolak: akun belum aktif / ditangguhkan]
     C -- Ya --> D[Dashboard sesuai peran]
     F[Lupa password] --> T[Tautan reset ke email] --> N[Atur password baru] --> LG
+    F --> WA[Hubungi admin via WhatsApp] --> AR[Admin: Kelola Pengguna, Reset Password] --> TMP[Login dengan password sementara] --> GP[Wajib ganti password di profil] --> D
 ```
 
 ### 6.6 Alur teknis sebuah request (MVC Laravel)
@@ -337,7 +342,7 @@ flowchart LR
 
 | Tabel | Kolom | Relasi |
 | --- | --- | --- |
-| `users` | id, name, email (unik), password, role (`admin`/`petani`/`pembeli`), phone, address, bank_name, bank_account_number, bank_account_name, photo, is_active, timestamps | hasMany products (sebagai petani), orders (sebagai pembeli), carts |
+| `users` | id, name, email (unik), password, role (`admin`/`petani`/`pembeli`), phone, address, bank_name, bank_account_number, bank_account_name, photo, is_active, must_change_password, timestamps | hasMany products (sebagai petani), orders (sebagai pembeli), carts |
 | `categories` | id, name, slug (unik), description, image, timestamps | hasMany products |
 | `products` | id, user_id (FK users), category_id (FK categories), name, slug (unik), description, price, stock, unit, weight (gram), image, is_active, timestamps | belongsTo farmer (users), category; hasMany order_items, carts |
 | `carts` | id, user_id (FK), product_id (FK), quantity, timestamps. Unik (user_id, product_id) | belongsTo user, product |
@@ -379,7 +384,7 @@ File: `routes/web.php`, `routes/modules/1-akun-admin.php`, `2-produk.php`, `3-be
 | Lapisan | Lokasi |
 | --- | --- |
 | Route | `routes/modules/` (dipisah per anggota) |
-| Middleware | `app/Http/Middleware/RoleMiddleware.php` |
+| Middleware | `app/Http/Middleware/RoleMiddleware.php`, `EnsurePasswordChanged.php` |
 | Controller | `app/Http/Controllers/{Admin, Petani, Pembeli, Auth}`, `CatalogController`, `ProfileController` |
 | Logika laporan bersama | `app/Http/Controllers/Concerns/BuildsSalesReport.php` (trait) |
 | Form Request | `app/Http/Requests/ProductRequest.php` |
@@ -424,11 +429,11 @@ Tidak memakai Node.js / npm / Vite. Bootstrap dan jQuery disimpan lokal sehingga
 | CRUD & Laporan | CRUD produk dan kategori; laporan penjualan dengan filter, CSV, cetak |
 
 ## 14. Pengujian
-PHPUnit, **96 tes / 416 assertion, semua lolos**, memakai SQLite in-memory. Perintah: `php artisan test`.
+PHPUnit, **103 tes / 458 assertion, semua lolos**, memakai SQLite in-memory. Perintah: `php artisan test`.
 
 | Folder | Cakupan |
 | --- | --- |
-| `tests/Feature/AkunAdmin` | Register (termasuk wajib rekening untuk petani), login, lupa & ubah password, profil (rekening petani, validasi angka), pembatasan peran, kelola petani, pesanan admin |
+| `tests/Feature/AkunAdmin` | Register (termasuk wajib rekening untuk petani), login, lupa & ubah password, tombol WhatsApp admin, reset password oleh admin, wajib ganti password sementara, profil (rekening petani, validasi angka), pembatasan peran, kelola petani, pesanan admin |
 | `tests/Feature/Produk` | CRUD produk, kepemilikan, kategori |
 | `tests/Feature/Belanja` | Katalog, keranjang, checkout dan pemecahan pesanan, tampilan rekening petani di checkout, pembatalan, bukti bayar |
 | `tests/Feature/PesananMasuk` | Pesanan petani, konfirmasi pembayaran, pengiriman, selesai otomatis, dashboard |

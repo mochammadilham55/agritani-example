@@ -64,7 +64,7 @@ class ProfileController extends Controller
             'current_password.current_password' => 'Password saat ini salah.',
         ]);
 
-        $request->user()->update(['password' => $data['password']]);
+        $request->user()->update(['password' => $data['password'], 'must_change_password' => false]);
 
         return back()->with('success', 'Password diperbarui.');
     }

@@ -22,6 +22,7 @@
         'admin' => [
             ['Dashboard', 'admin.dashboard'],
             ['Daftar Petani', 'admin.farmers.index'],
+            ['Kelola Pengguna', 'admin.users.index'],
             ['Kelola Kategori', 'admin.categories.index'],
             ['Daftar Pesanan', 'admin.orders.index'],
             ['Laporan Penjualan', 'admin.reports.index'],

@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        // Pengguna dengan password sementara dari admin wajib menggantinya dulu.
+        $middleware->web(append: [
+            \App\Http\Middleware\EnsurePasswordChanged::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

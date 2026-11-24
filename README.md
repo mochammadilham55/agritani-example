@@ -217,6 +217,8 @@ Secara bawaan `MAIL_MAILER=log` di `.env`, jadi email **tidak dikirim sungguhan*
 2. Buka `storage/logs/laravel.log`, cari baris terakhir yang memuat `/reset-password/`, lalu salin URL-nya ke browser.
 3. Isi password baru dan login kembali. Tautan hanya berlaku sekali dan kedaluwarsa dalam 60 menit.
 
+**Alternatif lewat admin:** jika `AGRITANI_ADMIN_WHATSAPP` diisi, halaman Lupa Password menampilkan tombol **Hubungi Admin via WhatsApp** (pesan otomatis berisi email). Admin membuka menu **Kelola Pengguna**, mencocokkan no. HP, lalu menekan **Reset Password**. Password sementara tampil sekali; pengguna wajib menggantinya saat login.
+
 Untuk mengirim email sungguhan, isi `MAIL_MAILER=smtp` dan data SMTP di `.env` (misalnya Mailtrap atau Gmail).
 
 ## Skenario demo untuk presentasi
@@ -241,6 +243,7 @@ Folder test: `AkunAdmin`, `Produk`, `Belanja`, `PesananMasuk`, `Laporan` (lapora
 | Variabel `.env` | Fungsi | Bawaan |
 |---|---|---|
 | `AGRITANI_SHIPPING_COST` | Ongkos kirim tetap per pesanan (Rp) | 10000 |
+| `AGRITANI_ADMIN_WHATSAPP` | Nomor WhatsApp admin untuk tombol "Hubungi Admin" di halaman login dan lupa password (format `628xxxxxxxxxx`). Kosong = tombol disembunyikan. Isi hanya di `.env` lokal | kosong |
 | `AGRITANI_AUTO_COMPLETE_DAYS` | Pesanan berstatus Dikirim otomatis Selesai setelah sekian hari jika pembeli tidak menekan "Pesanan Diterima" | 7 |
 
 ### Selesai otomatis (scheduler)

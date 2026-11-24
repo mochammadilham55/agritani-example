@@ -35,12 +35,13 @@ php artisan test tests/Feature/Laporan       # anggota 1 dan 4
 | 7 | `app/Http/Controllers/ProfileController.php` | `update():18` (email unik kecuali milik sendiri, foto, rekening khusus petani), `password():58` (`current_password`) |
 | 8 | `app/Http/Controllers/Admin/DashboardController.php:12` | Statistik + data grafik 7 hari |
 | 9 | `app/Http/Controllers/Admin/FarmerController.php` | `index():12` (cari + filter), `toggle():29` (aktifkan/tangguhkan) |
+| 9b | `app/Http/Controllers/Admin/UserController.php` + `app/Http/Middleware/EnsurePasswordChanged.php` | `index()` daftar pengguna, `resetPassword()` password sementara + `must_change_password`; middleware yang memaksa ganti password (didaftarkan di `bootstrap/app.php`) |
 | 10 | `app/Http/Controllers/Admin/OrderController.php` | `index():11`, `show():31` semua pesanan |
 | 11 | `app/Http/Controllers/Admin/ReportController.php:14` | Memanggil trait `BuildsSalesReport` tanpa `$farmerId` (semua toko) |
 | 12 | View: `auth/login`, `auth/register`, `auth/forgot-password`, `auth/reset-password`, `profile/edit`, `admin/dashboard`, `admin/farmers/index`, `admin/orders/*`, `admin/reports/index` | `@csrf`, `@error`, `old()`, `@if ($user->isPetani())` untuk bagian rekening |
 | 13 | `components/password-input.blade.php` + `agritani.js` bagian `[data-toggle-password]` dan `#bank-fields` | jQuery: tombol Lihat password, isian rekening muncul saat memilih Petani |
 | 14 | `database/seeders/UserSeeder.php` | Akun uji dan rekening contoh |
-| 15 | Tes: `AuthTest`, `LupaPasswordTest`, `ProfilTest`, `KelolaPetaniTest`, `PesananAdminTest`, `LaporanPenjualanTest` (bagian admin) | |
+| 15 | Tes: `AuthTest`, `LupaPasswordTest`, `ResetOlehAdminTest`, `ProfilTest`, `KelolaPetaniTest`, `PesananAdminTest`, `LaporanPenjualanTest` (bagian admin) | |
 
 **Pertanyaan latihan**
 1. Apa yang terjadi kalau pembeli membuka `/admin/dashboard`? Baris mana yang menolaknya?
