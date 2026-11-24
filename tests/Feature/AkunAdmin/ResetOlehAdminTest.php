@@ -37,6 +37,7 @@ class ResetOlehAdminTest extends TestCase
 
         $this->get('/lupa-password')->assertOk()
             ->assertSee('Hubungi Admin via WhatsApp')
+            ->assertDontSee('Kirim Tautan Reset')
             ->assertSee('https://wa.me/6287800000000?text=', false);
         $this->get('/login')->assertOk()->assertSee('https://wa.me/6287800000000', false);
     }
@@ -45,7 +46,8 @@ class ResetOlehAdminTest extends TestCase
     {
         config(['agritani.admin_whatsapp' => '']);
 
-        $this->get('/lupa-password')->assertOk()->assertDontSee('wa.me', false);
+        $this->get('/lupa-password')->assertOk()->assertDontSee('wa.me', false)
+            ->assertSee('Silakan hubungi admin AgriTani');
         $this->get('/login')->assertOk()->assertDontSee('wa.me', false);
     }
 

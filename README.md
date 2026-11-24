@@ -211,15 +211,14 @@ php artisan db:seed --class=DemoSeeder
 Seeder ini aman diulang dan dilewati jika pesanan sudah ada.
 
 ## Lupa password saat demo
-Secara bawaan `MAIL_MAILER=log` di `.env`, jadi email **tidak dikirim sungguhan**. Tautan reset ditulis ke `storage/logs/laravel.log`:
+Lupa password ditangani lewat admin (tidak lewat email):
 
-1. Di halaman login klik **Lupa password?**, masukkan email akun, lalu kirim.
-2. Buka `storage/logs/laravel.log`, cari baris terakhir yang memuat `/reset-password/`, lalu salin URL-nya ke browser.
-3. Isi password baru dan login kembali. Tautan hanya berlaku sekali dan kedaluwarsa dalam 60 menit.
+1. Isi `AGRITANI_ADMIN_WHATSAPP` di `.env` (format `628xxxxxxxxxx`). Jika kosong, halaman hanya menampilkan tulisan "Silakan hubungi admin".
+2. Di halaman login klik **Lupa password?**, isi email akun, lalu klik **Hubungi Admin via WhatsApp**. WhatsApp terbuka dengan pesan berisi email tersebut.
+3. Admin login, buka **Kelola Pengguna**, cocokkan no. HP pengirim, lalu klik **Reset Password**. Password sementara tampil sekali.
+4. Pengguna login dengan password sementara dan langsung diarahkan ke Profil untuk mengganti password.
 
-**Alternatif lewat admin:** jika `AGRITANI_ADMIN_WHATSAPP` diisi, halaman Lupa Password menampilkan tombol **Hubungi Admin via WhatsApp** (pesan otomatis berisi email). Admin membuka menu **Kelola Pengguna**, mencocokkan no. HP, lalu menekan **Reset Password**. Password sementara tampil sekali; pengguna wajib menggantinya saat login.
-
-Untuk mengirim email sungguhan, isi `MAIL_MAILER=smtp` dan data SMTP di `.env` (misalnya Mailtrap atau Gmail).
+Catatan: kode reset lewat email bawaan Laravel (`/lupa-password` POST dan `/reset-password/{token}`) masih ada di backend dan tetap diuji, tetapi tidak lagi ditampilkan di halaman.
 
 ## Skenario demo untuk presentasi
 1. Login **pembeli** → buka katalog → tambah dua produk dari petani berbeda ke keranjang → checkout dengan **transfer**. Tunjukkan bahwa pesanan terpecah jadi dua.

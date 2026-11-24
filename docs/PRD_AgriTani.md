@@ -96,7 +96,7 @@ Pembatasan dilakukan oleh middleware `role` (`app/Http/Middleware/RoleMiddleware
 | --- | --- | --- |
 | F-1.1 | Register | Nama, email unik, no. HP opsional, password min. 8 karakter + konfirmasi. Pilih peran pembeli/petani. Petani wajib mengisi nama bank, nomor rekening (angka 6–30 digit), dan atas nama |
 | F-1.2 | Login / logout | Diarahkan ke dashboard sesuai peran. Akun belum aktif ditolak dengan pesan |
-| F-1.3 | Lupa password | Kirim tautan reset ke email, dibatasi 6 permintaan per menit. Atur ulang password lewat tautan |
+| F-1.3 | Lupa password | Halaman lupa password hanya berisi isian email dan tombol Hubungi Admin via WhatsApp (lihat F-1.10–F-1.12). Reset lewat tautan email bawaan Laravel masih ada di backend (dibatasi 6 permintaan per menit) tetapi tidak ditampilkan |
 | F-1.4 | Profil | Ubah nama, email, no. HP, alamat, foto. Petani juga mengubah rekening bank (wajib) |
 | F-1.5 | Ubah password | Wajib mengisi password saat ini |
 | F-1.10 | Hubungi admin via WhatsApp | Tombol di halaman lupa password dan login membuka `wa.me/<nomor admin>` dengan pesan otomatis berisi email. Nomor diatur di `.env` (`AGRITANI_ADMIN_WHATSAPP`); kosong = tombol disembunyikan |
